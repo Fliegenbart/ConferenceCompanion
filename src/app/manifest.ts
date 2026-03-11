@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "E.ON Conference Companion",
-    short_name: "Conference",
-    description: "Private conference companion for invited E.ON event attendees and organizers.",
+    name: "ConferenceCompanion",
+    short_name: "Companion",
+    description: "Private conference companion for invited attendees and organizers.",
     start_url: "/guest",
     display: "standalone",
     background_color: "#eef2ec",

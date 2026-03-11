@@ -31,7 +31,7 @@ export function GuestLoginForm({ defaultEmail }: { defaultEmail?: string }) {
     startTransition(async () => {
       const result = await signIn("email", {
         email: values.email,
-        callbackUrl: "/guest",
+        callbackUrl: "/login/redirect",
         redirect: false,
       });
 
@@ -55,9 +55,7 @@ export function GuestLoginForm({ defaultEmail }: { defaultEmail?: string }) {
         {form.formState.errors.email ? (
           <p className="text-sm text-[#8f2f20]">{form.formState.errors.email.message}</p>
         ) : null}
-        <p className="text-xs text-[#708177]">
-          Organizer verwenden fuer den Pilotbetrieb den separaten Microsoft-Entra-Zugang.
-        </p>
+        <p className="text-xs text-[#708177]">Teilnehmer und Organizer verwenden denselben sicheren Magic-Link-Zugang.</p>
       </div>
       <Button type="submit" className="w-full" size="lg" disabled={isPending}>
         {isPending ? <LoaderCircle className="mr-2 size-4 animate-spin" /> : null}

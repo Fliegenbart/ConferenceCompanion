@@ -17,7 +17,7 @@ type SendMailInput = {
 };
 
 export async function sendTransactionalEmail(input: SendMailInput) {
-  const from = process.env.EMAIL_FROM ?? "E.ON Conference Companion <no-reply@example.com>";
+  const from = process.env.EMAIL_FROM ?? "ConferenceCompanion <no-reply@example.com>";
   const html = await render(input.react);
   const resendApiKey = process.env.RESEND_API_KEY;
 

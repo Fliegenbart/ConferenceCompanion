@@ -131,7 +131,7 @@ async function sendConfirmation(attendeeId: string, actorUserId?: string | null)
           `Hotel benoetigt: ${attendee.hotelRequired ? "Ja" : "Nein"}`,
           "QR Check-in aktiviert",
         ]}
-        ctaHref={absoluteUrl(`/guest/login?email=${encodeURIComponent(attendee.email)}`)}
+        ctaHref={absoluteUrl(`/login?email=${encodeURIComponent(attendee.email)}`)}
       />
     ),
     metadata: { qrToken },
@@ -566,13 +566,13 @@ export async function sendReminderAction(attendeeId: string) {
     attendeeId,
     eventId: attendee.eventId,
     to: attendee.email,
-    subject: "Erinnerung zur E.ON Vertriebskonferenz 2026",
+    subject: `Erinnerung zu ${attendee.event.name}`,
     type: EmailType.REMINDER,
     react: (
       <ReminderEmailTemplate
         attendeeName={`${attendee.firstName} ${attendee.lastName}`}
         eventName={attendee.event.name}
-        ctaHref={absoluteUrl(`/guest/login?email=${encodeURIComponent(attendee.email)}`)}
+        ctaHref={absoluteUrl(`/login?email=${encodeURIComponent(attendee.email)}`)}
       />
     ),
   });

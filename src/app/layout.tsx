@@ -16,9 +16,9 @@ const newsreader = Newsreader({
 });
 
 export const metadata: Metadata = {
-  title: "E.ON Conference Companion",
-  description: "Private invitation-only event companion for the E.ON Vertriebskonferenz 2026.",
-  applicationName: "E.ON Conference Companion",
+  title: "ConferenceCompanion",
+  description: "Private invitation-only conference companion for registrations, agenda, logistics and participant communication.",
+  applicationName: "ConferenceCompanion",
 };
 
 export const dynamic = "force-dynamic";

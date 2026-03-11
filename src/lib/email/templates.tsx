@@ -28,7 +28,7 @@ function BaseEmailTemplate({ preview, heading, intro, ctaLabel, ctaHref, childre
       <Preview>{preview}</Preview>
       <Body style={bodyStyle}>
         <Container style={containerStyle}>
-          <Text style={eyebrowStyle}>E.ON Conference Companion</Text>
+          <Text style={eyebrowStyle}>ConferenceCompanion</Text>
           <Heading style={headingStyle}>{heading}</Heading>
           <Text style={introStyle}>{intro}</Text>
           {children}
@@ -145,7 +145,7 @@ export function MagicLinkEmailTemplate(props: {
 }) {
   return (
     <BaseEmailTemplate
-      preview="Ihr sicherer Zugang zum Conference Companion"
+      preview="Ihr sicherer Zugang zu ConferenceCompanion"
       heading="Sicherer Zugang"
       intro="Bitte verwenden Sie den folgenden Button, um sich in Ihren persoenlichen Bereich einzuloggen."
       ctaHref={props.url}

@@ -28,6 +28,6 @@ export function hasMinimumRole(session: Session | null, role: AdminRole) {
 
 export function requireRole(session: Session | null, role: AdminRole) {
   if (!hasMinimumRole(session, role)) {
-    redirect("/guest/login?reason=forbidden");
+    redirect("/login?reason=forbidden");
   }
 }

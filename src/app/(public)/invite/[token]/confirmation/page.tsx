@@ -46,7 +46,7 @@ export default async function ConfirmationPage({ params }: { params: Promise<{ t
           </div>
           <div className="flex flex-wrap gap-3">
             <Button asChild>
-              <Link href={`/guest/login?email=${encodeURIComponent(invitation.attendee.email)}`}>Zum Teilnehmerbereich</Link>
+              <Link href={`/login?email=${encodeURIComponent(invitation.attendee.email)}`}>Zum Teilnehmerbereich</Link>
             </Button>
             <Button variant="outline" asChild>
               <Link href="/">Zur Startseite</Link>

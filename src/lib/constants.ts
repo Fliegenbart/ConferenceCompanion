@@ -16,13 +16,13 @@ import {
 
 export const DEFAULT_EVENT_SLUG = "vertriebskonferenz-2026";
 
-export const CONSENT_VERSION = "2026-04-enterprise-pilot";
+export const CONSENT_VERSION = "2026-04-whitelabel-v1";
 
 export const PRIVACY_CONSENT_LABEL =
   "Ich habe die Datenschutzinformation und die rechtlichen Hinweise gelesen. Ich stimme der Verarbeitung meiner Registrierungs-, Reise- und Organisationsdaten fuer die Durchfuehrung der Veranstaltung zu.";
 
 export const PHOTO_CONSENT_LABEL =
-  "Ich willige ein, dass Foto- und Videoaufnahmen aus dem Veranstaltungsumfeld fuer interne Nachbereitung, Pilotdokumentation und freigegebene Unternehmenskommunikation verwendet werden duerfen.";
+  "Ich willige ein, dass Foto- und Videoaufnahmen aus dem Veranstaltungsumfeld fuer interne Nachbereitung und freigegebene Unternehmenskommunikation verwendet werden duerfen.";
 
 export const ADMIN_ROLE_LABELS: Record<AdminRole, string> = {
   SUPER_ADMIN: "Super Admin",
@@ -54,10 +54,10 @@ export const attendeeNavigation = [
 
 export const adminNavigation = [
   { href: "/admin", label: "Uebersicht", icon: LayoutDashboard },
-  { href: "/admin/attendees", label: "Attendees", icon: Users },
+  { href: "/admin/attendees", label: "Teilnehmer", icon: Users },
   { href: "/admin/agenda", label: "Agenda", icon: CalendarRange },
-  { href: "/admin/content", label: "Content", icon: Mic2 },
-  { href: "/admin/messaging", label: "Messaging", icon: Bell },
+  { href: "/admin/content", label: "Inhalte", icon: Mic2 },
+  { href: "/admin/messaging", label: "Nachrichten", icon: Bell },
   { href: "/admin/settings", label: "Einstellungen", icon: Settings2 },
   { href: "/admin/audit-log", label: "Audit Log", icon: ShieldCheck },
 ];

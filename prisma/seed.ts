@@ -74,10 +74,10 @@ async function main() {
   const event = await prisma.event.create({
     data: {
       slug: DEFAULT_EVENT_SLUG,
-      name: "E.ON Vertriebskonferenz 2026",
+      name: "Vertriebskonferenz 2026",
       tagline: "Gemeinsam die naechste Vertriebsphase gestalten",
       description:
-        "Geschlossene interne Vertriebskonferenz fuer eingeladene Gaeste mit Fokus auf Strategie, Marktimpulse und operative Zusammenarbeit.",
+        "Geschlossene Vertriebskonferenz fuer eingeladene Gaeste mit Fokus auf Strategie, Marktimpulse und operative Zusammenarbeit.",
       timezone: "Europe/Berlin",
       startDate: new Date("2026-05-14T08:00:00.000Z"),
       endDate: new Date("2026-05-15T17:00:00.000Z"),
@@ -88,7 +88,7 @@ async function main() {
       attendeeSelectionOn: true,
       pwaEnabled: true,
       confirmationText:
-        "Vielen Dank fuer Ihre Registrierung. Im Conference Companion finden Sie ab sofort Agenda, Logistik und alle aktuellen Hinweise.",
+        "Vielen Dank fuer Ihre Registrierung. In ConferenceCompanion finden Sie ab sofort Agenda, Logistik und alle aktuellen Hinweise.",
       privacyPolicyUrl: "/privacy-policy",
       legalNoticeUrl: "/legal",
     },
@@ -135,7 +135,7 @@ async function main() {
         eventId: event.id,
         name: "Dr. Elena Hofmann",
         role: "Chief Sales Officer",
-        company: "E.ON Energie Deutschland",
+        company: "Musterunternehmen GmbH",
         bio: "Elena Hofmann verantwortet die strategische Ausrichtung des B2B- und Privatkundenvertriebs und treibt datenbasierte Vertriebsmodelle voran.",
         imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80",
       },
@@ -145,7 +145,7 @@ async function main() {
         eventId: event.id,
         name: "Matthias Reuter",
         role: "Director Business Development",
-        company: "E.ON",
+        company: "Musterunternehmen GmbH",
         bio: "Matthias Reuter fokussiert sich auf Marktpotenziale, neue Partnerschaften und skalierbare Vertriebshebel fuer komplexe Energieloesungen.",
         imageUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80",
       },
@@ -155,7 +155,7 @@ async function main() {
         eventId: event.id,
         name: "Sophie Albrecht",
         role: "Head of Customer Experience",
-        company: "E.ON",
+        company: "Musterunternehmen GmbH",
         bio: "Sophie Albrecht gestaltet serviceorientierte Customer Journeys und verbindet vertriebliche Beratung mit digitaler Exzellenz.",
         imageUrl: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=800&q=80",
       },
@@ -165,7 +165,7 @@ async function main() {
         eventId: event.id,
         name: "Jonas Dietrich",
         role: "Lead Sales Enablement",
-        company: "E.ON",
+        company: "Musterunternehmen GmbH",
         bio: "Jonas Dietrich verantwortet Enablement-Programme, Best Practices und operative Tools fuer leistungsstarke Vertriebsteams.",
         imageUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80",
       },
@@ -174,7 +174,7 @@ async function main() {
 
   const sessionData = [
     {
-      title: "E.ON Vertriebsstrategie 2026",
+      title: "Vertriebsstrategie 2026",
       subtitle: "Keynote und strategischer Ausblick",
       description: "Management-Update zu Marktumfeld, Prioritaeten und Wachstumspfaden im Vertrieb.",
       category: "Keynote",
@@ -439,14 +439,14 @@ async function main() {
     prisma.user.create({
       data: {
         name: "Laura Admin",
-        email: "laura.admin@eon.example",
+        email: "laura.admin@conferencecompanion.example",
         kind: UserKind.ADMIN,
       },
     }),
     prisma.user.create({
       data: {
         name: "Max Checkin",
-        email: "max.checkin@eon.example",
+        email: "max.checkin@conferencecompanion.example",
         kind: UserKind.ADMIN,
       },
     }),
@@ -489,7 +489,7 @@ async function main() {
         firstName,
         lastName,
         email,
-        company: index % 2 === 0 ? "E.ON Energie Deutschland" : "Partnernetzwerk Nord",
+        company: index % 2 === 0 ? "Musterunternehmen GmbH" : "Partnernetzwerk Nord",
         title: index % 3 === 0 ? "Regional Sales Lead" : "Account Manager",
         phone: `+49 170 100${String(index).padStart(2, "0")}`,
         invitationStatus,
@@ -601,7 +601,7 @@ async function main() {
         attendeeId: sampleAttendee.id,
         eventId: event.id,
         recipient: sampleAttendee.email,
-        subject: "Ihre Einladung zur E.ON Vertriebskonferenz 2026",
+        subject: "Ihre Einladung zur Vertriebskonferenz 2026",
         status: "seeded",
         type: EmailType.INVITATION,
       },

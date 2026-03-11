@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 const sections = [
   {
     title: "Verantwortliche Stelle",
-    body: "Die Pilotanwendung E.ON Conference Companion wird fuer die Organisation geschlossener Unternehmensveranstaltungen betrieben. Verantwortlich fuer die Verarbeitung der im Companion gepflegten Teilnehmer- und Organisationsdaten ist die jeweilige E.ON-Veranstaltungsorganisation in Zusammenarbeit mit den benannten Event-, Datenschutz- und IT-Ansprechpartnern.",
+    body: "ConferenceCompanion wird fuer die Organisation geschlossener Unternehmensveranstaltungen eingesetzt. Verantwortlich fuer die Verarbeitung der im Companion gepflegten Teilnehmer- und Organisationsdaten ist jeweils die veranstaltende Organisation gemeinsam mit den benannten Event-, Datenschutz- und IT-Ansprechpartnern.",
   },
   {
     title: "Verarbeitete Datenkategorien",
@@ -14,8 +14,8 @@ const sections = [
     body: "Die Verarbeitung dient ausschliesslich der Planung, Durchfuehrung, Betreuung und Nachbereitung der geschlossenen Veranstaltung. Dazu gehoeren Einladung, Registrierung, Teilnehmerkommunikation, Venue-Logistik, Sicherheits- und Zutrittsorganisation, Sessionplanung sowie die Dokumentation von erteilten Einwilligungen.",
   },
   {
-    title: "Speicher- und Loeschfristen fuer den Pilotbetrieb",
-    body: "Als Pilotstandard gelten folgende Aufbewahrungsziele: Organisations- und Registrierungsdaten bis 180 Tage nach Veranstaltungsende, Check-in- und operative Logdaten bis 90 Tage nach Veranstaltungsende, Consent-Nachweise bis 3 Jahre fuer Nachweiszwecke oder bis zur finalen juristischen Freigabe einer abweichenden Konzernrichtlinie. Vor produktivem Rollout ist diese Fristenlogik mit Datenschutz und Records Management verbindlich freizugeben.",
+    title: "Speicher- und Loeschfristen",
+    body: "Als Whitelabel-Standard gelten folgende Aufbewahrungsziele: Organisations- und Registrierungsdaten bis 180 Tage nach Veranstaltungsende, Check-in- und operative Logdaten bis 90 Tage nach Veranstaltungsende, Consent-Nachweise bis 3 Jahre fuer Nachweiszwecke. Vor produktivem Einsatz sollte diese Fristenlogik mit Datenschutz und Records Management der veranstaltenden Organisation abgestimmt werden.",
   },
   {
     title: "Empfaenger und technische Dienstleister",
@@ -32,10 +32,10 @@ export default function PrivacyPolicyPage() {
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,#dfe8da_0%,#eef2ec_45%,#f6f4ee_100%)] px-4 py-10">
       <Card className="mx-auto max-w-5xl space-y-6 p-8">
         <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#6b7f73]">Pilot Governance</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#6b7f73]">Privacy</p>
           <h1 className="text-4xl text-[#173325]">Datenschutzinformation</h1>
           <p className="text-base leading-7 text-[#5d7065]">
-            Diese Datenschutzinformation beschreibt den vorgesehenen Datenumgang fuer den ersten internen Pilotbetrieb des E.ON Conference Companion. Vor einem breiteren produktiven Einsatz ist die finale juristische Freigabe innerhalb von E.ON erforderlich.
+            Diese Datenschutzinformation beschreibt den vorgesehenen Datenumgang fuer ConferenceCompanion als geschlossene Event-Webapp. Vor jedem produktiven Einsatz sollten die Texte an die veranstaltende Organisation und deren rechtliche Anforderungen angepasst werden.
           </p>
         </div>
         <div className="space-y-5">

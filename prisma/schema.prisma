@@ -82,15 +82,12 @@ enum SessionSelectionStatus {
 }
 
 model User {
-  id            String       @id @default(cuid())
-  name          String?
-  email         String       @unique
-  emailVerified DateTime?
-  image         String?
-  kind          UserKind     @default(ATTENDEE)
-  entraObjectId   String?      @unique
-  entraTenantId   String?
-  lastEntraSyncAt DateTime?
+  id              String         @id @default(cuid())
+  name            String?
+  email           String         @unique
+  emailVerified   DateTime?
+  image           String?
+  kind            UserKind       @default(ATTENDEE)
   attendee        Attendee?
   memberships     Membership[]
   accounts        Account[]

@@ -17,13 +17,13 @@ export default async function Home() {
       <main className="mx-auto max-w-7xl space-y-8">
         <div className="glass-panel rounded-[36px] border border-[#d7e0d3] px-6 py-6 shadow-lg md:px-8">
           <div className="mb-12 flex flex-wrap items-center justify-between gap-4">
-            <BrandMark />
-            <div className="flex flex-wrap gap-3">
-              <Button variant="ghost" asChild>
-                <Link href="/guest/login">Magic Link Login</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/privacy-policy">Datenschutz</Link>
+              <BrandMark />
+              <div className="flex flex-wrap gap-3">
+                <Button variant="ghost" asChild>
+                  <Link href="/login">Magic Link Login</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/privacy-policy">Datenschutz</Link>
               </Button>
             </div>
           </div>
@@ -31,24 +31,24 @@ export default async function Home() {
             <div className="space-y-6">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#5f7267]">Closed corporate event app</p>
               <h1 className="max-w-3xl text-5xl leading-tight tracking-tight text-[#173325] md:text-6xl">
-                Premium Event Guidance for invited conference guests and organizers.
+                ConferenceCompanion fuer geschlossene Unternehmensveranstaltungen.
               </h1>
               <p className="max-w-2xl text-lg leading-8 text-[#4c6256]">
-                Registration, agenda, logistics, speaker information, announcements and live check-in in one calm, secure experience designed for private E.ON conference operations.
+                Registrierung, Agenda, Logistik, Speaker-Informationen und Updates in einer ruhigen, klaren Webapp fuer eingeladene Teilnehmer und Organizer.
               </p>
               <div className="flex flex-wrap gap-4">
-              <Button size="lg" asChild>
-                <Link href="/guest/login">Teilnehmerbereich oeffnen</Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild>
-                  <Link href="/admin/login">Organizer Sign-in</Link>
-              </Button>
-            </div>
+                <Button size="lg" asChild>
+                  <Link href="/login">Zum Login</Link>
+                </Button>
+                <Button size="lg" variant="outline" asChild>
+                  <Link href="/legal">Mehr erfahren</Link>
+                </Button>
+              </div>
             </div>
             <Card className="space-y-5 bg-[#163224] p-6 text-[#fbf7ef]">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#c9d6cf]">Aktueller Event</p>
-                <h2 className="mt-3 text-3xl">{event?.name ?? "E.ON Vertriebskonferenz 2026"}</h2>
+                <h2 className="mt-3 text-3xl">{event?.name ?? "Vertriebskonferenz 2026"}</h2>
               </div>
               <div className="space-y-3 text-sm leading-7 text-[#dce5df]">
                 <p>{event ? `${formatDate(event.startDate)} bis ${formatDate(event.endDate)}` : "14.-15. Mai 2026"}</p>

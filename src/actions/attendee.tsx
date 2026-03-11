@@ -203,13 +203,13 @@ export async function submitRegistrationAction(token: string, payload: unknown):
       `Foto-/Videoeinwilligung: ${parsed.data.photoConsentAccepted ? "Ja" : "Nein"}`,
     ];
 
-    const attendeePortalUrl = `${process.env.NEXTAUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/guest/login?email=${encodeURIComponent(attendee.email)}`;
+    const attendeePortalUrl = `${process.env.NEXTAUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/login?email=${encodeURIComponent(attendee.email)}`;
 
     await sendTransactionalEmail({
       attendeeId: attendee.id,
       eventId: attendee.eventId,
       to: attendee.email,
-      subject: "Ihre Registrierung fuer die E.ON Vertriebskonferenz 2026",
+      subject: `Ihre Registrierung fuer ${attendee.event.name}`,
       type:
         invitation.attendee.registrationStatus === RegistrationStatus.PENDING
           ? EmailType.REGISTRATION_CONFIRMATION
