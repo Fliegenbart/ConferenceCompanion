@@ -88,6 +88,9 @@ model User {
   emailVerified DateTime?
   image         String?
   kind          UserKind     @default(ATTENDEE)
+  entraObjectId   String?      @unique
+  entraTenantId   String?
+  lastEntraSyncAt DateTime?
   attendee        Attendee?
   memberships     Membership[]
   accounts        Account[]

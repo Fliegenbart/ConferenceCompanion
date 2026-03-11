@@ -16,7 +16,13 @@ import {
 
 export const DEFAULT_EVENT_SLUG = "vertriebskonferenz-2026";
 
-export const CONSENT_VERSION = "2026-03";
+export const CONSENT_VERSION = "2026-04-enterprise-pilot";
+
+export const PRIVACY_CONSENT_LABEL =
+  "Ich habe die Datenschutzinformation und die rechtlichen Hinweise gelesen. Ich stimme der Verarbeitung meiner Registrierungs-, Reise- und Organisationsdaten fuer die Durchfuehrung der Veranstaltung zu.";
+
+export const PHOTO_CONSENT_LABEL =
+  "Ich willige ein, dass Foto- und Videoaufnahmen aus dem Veranstaltungsumfeld fuer interne Nachbereitung, Pilotdokumentation und freigegebene Unternehmenskommunikation verwendet werden duerfen.";
 
 export const ADMIN_ROLE_LABELS: Record<AdminRole, string> = {
   SUPER_ADMIN: "Super Admin",

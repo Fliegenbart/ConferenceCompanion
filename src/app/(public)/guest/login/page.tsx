@@ -1,6 +1,8 @@
 import { MailCheck } from "lucide-react";
+import Link from "next/link";
 
 import { GuestLoginForm } from "@/components/forms/guest-login-form";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +23,7 @@ export default async function GuestLoginPage({
           </div>
           <div className="space-y-3">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#c7d4cd]">Secure Access</p>
-            <h1 className="text-4xl">Magic Link Login fuer Teilnehmer und Organizer</h1>
+            <h1 className="text-4xl">Magic Link Login fuer Teilnehmer</h1>
             <p className="leading-7 text-[#d8e3dc]">
               Verwenden Sie Ihre freigeschaltete E-Mail-Adresse, um einen sicheren Login-Link zu erhalten. Ohne Einladung ist kein Zugriff moeglich.
             </p>
@@ -35,6 +37,12 @@ export default async function GuestLoginPage({
             </p>
           </div>
           <GuestLoginForm defaultEmail={resolvedSearchParams.email} />
+          <div className="mt-6 border-t border-[#d9e1d5] pt-6">
+            <p className="mb-3 text-sm text-[#5d7065]">Organizer oder Check-in-Team?</p>
+            <Button variant="outline" asChild>
+              <Link href="/admin/login">Zum Organizer-Login</Link>
+            </Button>
+          </div>
         </Card>
       </div>
     </div>

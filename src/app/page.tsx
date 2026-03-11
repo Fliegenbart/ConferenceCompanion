@@ -37,13 +37,13 @@ export default async function Home() {
                 Registration, agenda, logistics, speaker information, announcements and live check-in in one calm, secure experience designed for private E.ON conference operations.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Button size="lg" asChild>
-                  <Link href="/guest/login">Teilnehmerbereich oeffnen</Link>
-                </Button>
-                <Button size="lg" variant="outline" asChild>
-                  <Link href="/admin">Organizer Dashboard</Link>
-                </Button>
-              </div>
+              <Button size="lg" asChild>
+                <Link href="/guest/login">Teilnehmerbereich oeffnen</Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                  <Link href="/admin/login">Organizer Sign-in</Link>
+              </Button>
+            </div>
             </div>
             <Card className="space-y-5 bg-[#163224] p-6 text-[#fbf7ef]">
               <div>

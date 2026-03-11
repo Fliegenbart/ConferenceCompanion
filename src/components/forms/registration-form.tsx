@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AttendanceResponse } from "@prisma/client";
+import Link from "next/link";
 import { startTransition, useDeferredValue, useState } from "react";
 import { useRouter } from "next/navigation";
 import { type Resolver, useForm } from "react-hook-form";
@@ -13,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { PHOTO_CONSENT_LABEL, PRIVACY_CONSENT_LABEL } from "@/lib/constants";
 import { registrationSchema } from "@/lib/validations";
 
 type RegistrationValues = {
@@ -200,14 +202,24 @@ export function RegistrationForm({
             checked={form.watch("privacyAccepted")}
             onCheckedChange={(value) => form.setValue("privacyAccepted", Boolean(value))}
           />
-          <span>Ich habe die Datenschutzinformation gelesen und stimme der Speicherung meiner Angaben fuer die Veranstaltungsorganisation zu.</span>
+          <span>
+            {PRIVACY_CONSENT_LABEL}{" "}
+            <Link href="/privacy-policy" className="font-semibold text-[#8a3d26] underline underline-offset-4">
+              Datenschutz
+            </Link>{" "}
+            und{" "}
+            <Link href="/legal" className="font-semibold text-[#8a3d26] underline underline-offset-4">
+              Rechtliche Hinweise
+            </Link>
+            .
+          </span>
         </label>
         <label className="flex items-start gap-3 text-sm text-[#284334]">
           <Checkbox
             checked={form.watch("photoConsentAccepted")}
             onCheckedChange={(value) => form.setValue("photoConsentAccepted", Boolean(value))}
           />
-          <span>Ich willige in die Verwendung von Foto- und Videoaufnahmen im Rahmen der Event-Dokumentation ein.</span>
+          <span>{PHOTO_CONSENT_LABEL}</span>
         </label>
       </div>
 

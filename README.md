@@ -8,7 +8,9 @@ Private invitation-only conference companion for a closed corporate event such a
 - TypeScript
 - Tailwind CSS
 - Prisma + PostgreSQL
-- Auth.js / NextAuth email magic links
+- Auth.js / NextAuth
+- Microsoft Entra ID for organizer access
+- Magic-link access for attendees
 - Zod + React Hook Form
 - TanStack Table
 - Resend transactional mail integration
@@ -18,7 +20,9 @@ Private invitation-only conference companion for a closed corporate event such a
 ## What Is Implemented
 
 - Invitation-based attendee registration with secure token links
-- Magic-link access for attendees and admins
+- Attendee magic-link access for invited guests
+- Organizer sign-in page for Microsoft Entra ID
+- Tenant-aware and membership-aware admin access checks
 - Mobile-first attendee area:
   - Home
   - Agenda
@@ -37,16 +41,31 @@ Private invitation-only conference companion for a closed corporate event such a
   - Settings
   - Audit log
 - QR check-in flow with browser camera scanning and manual fallback
-- Transactional email templates for invitation, confirmation, update, reminder, announcement, and magic-link access
-- Prisma schema, generated migration SQL, and seed data for `E.ON Vertriebskonferenz 2026`
+- Transactional email templates for invitation, confirmation, update, reminder, announcement, and attendee magic-link access
+- Prisma schema, migration SQL, and seed data for `E.ON Vertriebskonferenz 2026`
+- Pilot governance docs, legal/privacy pilot copy, health endpoint, and observability hooks
 - Sample downloadable PDFs under [`public/docs`](/Users/davidwegener/Desktop/neue-apps/ConferenceCompanion/public/docs)
+
+## Enterprise Pilot Hardening
+
+- Organizer access is split from attendee access:
+  - Attendees use invitation + magic links
+  - Organizers use Microsoft Entra ID
+- Admin authorization still depends on database-backed memberships and roles
+- Optional tenant and group restrictions can be enforced with environment variables
+- Structured auth and mail failures can be routed to `PILOT_ALERT_WEBHOOK_URL`
+- Healthcheck endpoint for uptime monitoring: [`/api/health`](/Users/davidwegener/Desktop/neue-apps/ConferenceCompanion/src/app/api/health/route.ts)
+
+Supporting docs:
+
+- [`docs/admin-access-governance.md`](/Users/davidwegener/Desktop/neue-apps/ConferenceCompanion/docs/admin-access-governance.md)
+- [`docs/enterprise-pilot-runbook.md`](/Users/davidwegener/Desktop/neue-apps/ConferenceCompanion/docs/enterprise-pilot-runbook.md)
 
 ## Placeholder Or v1-Limited Areas
 
-- Legal notice and privacy policy pages contain placeholder copy
+- Legal/privacy copy is now pilot-grade, but still requires final internal legal approval before broad production rollout
 - Waitlist is schema-ready but not exposed as a full workflow
 - Admin content editing is structured-form based, not a rich CMS
-- Corporate SSO / Entra ID is not implemented yet
 - Push notifications, badge printing, networking, multilingual UX, native wrapper, and live polling/Q&A remain TODOs
 
 ## Local Setup
@@ -84,11 +103,38 @@ pnpm db:seed
 pnpm dev
 ```
 
+## Required Environment Variables
+
+Core runtime:
+
+- `DATABASE_URL`
+- `NEXTAUTH_URL`
+- `NEXTAUTH_SECRET`
+- `APP_SECRET`
+
+Transactional email:
+
+- `EMAIL_FROM`
+- `RESEND_API_KEY`
+
+Organizer SSO:
+
+- `ENTRA_ID_CLIENT_ID`
+- `ENTRA_ID_CLIENT_SECRET`
+- `ENTRA_ID_TENANT_ID`
+- `ENTRA_ALLOWED_TENANT_ID`
+- `ENTRA_ALLOWED_GROUP_IDS`
+
+Pilot observability:
+
+- `PILOT_ALERT_WEBHOOK_URL`
+
 ## Seeded Access
 
 - Example super admin email: `laura.admin@eon.example`
 - Example check-in staff email: `max.checkin@eon.example`
 - Attendee logins are invitation-based and then magic-link based
+- Organizer sign-in requires Microsoft Entra ID configuration plus matching memberships in the app database
 
 Without `RESEND_API_KEY`, email sending is simulated and logged to the server console plus `EmailLog`.
 
@@ -96,30 +142,35 @@ Without `RESEND_API_KEY`, email sending is simulated and logged to the server co
 
 - Prisma schema: [`prisma/schema.prisma`](/Users/davidwegener/Desktop/neue-apps/ConferenceCompanion/prisma/schema.prisma)
 - Seed script: [`prisma/seed.ts`](/Users/davidwegener/Desktop/neue-apps/ConferenceCompanion/prisma/seed.ts)
-- SQL migration: [`prisma/migrations/20260311170000_init/migration.sql`](/Users/davidwegener/Desktop/neue-apps/ConferenceCompanion/prisma/migrations/20260311170000_init/migration.sql)
+- Initial SQL migration: [`prisma/migrations/20260311170000_init/migration.sql`](/Users/davidwegener/Desktop/neue-apps/ConferenceCompanion/prisma/migrations/20260311170000_init/migration.sql)
+- Enterprise pilot migration: [`prisma/migrations/20260311193000_enterprise_pilot_hardening/migration.sql`](/Users/davidwegener/Desktop/neue-apps/ConferenceCompanion/prisma/migrations/20260311193000_enterprise_pilot_hardening/migration.sql)
 
 ## Deployment Notes
 
-Recommended baseline deployment:
+Recommended pilot deployment:
 
 - App hosting: Vercel
 - Database: managed PostgreSQL
 - Email: Resend
-- File assets: static files in `public/` or later object storage
+- Identity: Microsoft Entra ID
+- Health monitoring: uptime probe against `/api/health`
 
-Production checklist:
+Pilot deployment checklist:
 
-1. Configure `NEXTAUTH_URL`, `NEXTAUTH_SECRET`, `APP_SECRET`, `DATABASE_URL`, and `RESEND_API_KEY`.
+1. Configure runtime secrets and Entra credentials.
 2. Run Prisma migrations against the production database.
-3. Replace placeholder legal text with approved E.ON content.
-4. Validate domain/email sender configuration in Resend.
-5. Review admin seed strategy and restrict admin emails.
-6. Add monitoring, backups, retention policies, and security review before go-live.
+3. Validate Resend sender domain and email-from policy.
+4. Confirm named admin users, roles, and optional Entra groups.
+5. Verify `/admin/login`, `/guest/login`, one invitation flow, one announcement, and `/check-in`.
+6. Configure `PILOT_ALERT_WEBHOOK_URL` if central pilot alerting is required.
 
-## Recommended Next Steps For Enterprise Rollout
+## Governance And Retention Notes
 
-1. Replace magic-link admin auth with E.ON Entra ID / SSO integration.
-2. Finalize GDPR text, consent wording, retention periods, and audit review.
-3. Add observability, alerting, and operational dashboards.
-4. Complete UAT with realistic attendee imports and venue operations.
-5. Extend check-in for badge printing and offline fallback procedures.
+Pilot default retention targets:
+
+- Registrations and attendee operations data: 180 days after event end
+- Check-in events and operational logs: 90 days after event end
+- Consent records: 3 years pending legal confirmation
+- Email logs: 180 days pending legal confirmation
+
+These defaults should be formally aligned with E.ON legal, privacy, and records-management stakeholders before wider rollout.

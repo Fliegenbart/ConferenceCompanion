@@ -3,6 +3,7 @@ import { EmailType, Prisma } from "@prisma/client";
 import type { ReactElement } from "react";
 import { Resend } from "resend";
 
+import { reportPilotError } from "@/lib/observability";
 import { prisma } from "@/lib/prisma";
 
 type SendMailInput = {
@@ -68,6 +69,11 @@ export async function sendTransactionalEmail(input: SendMailInput) {
     return { data: { id: "simulated" } };
   } catch (error) {
     console.error("Failed to send transactional email", error);
+    await reportPilotError("email.send.failed", error, {
+      recipient: input.to,
+      subject: input.subject,
+      emailType: input.type,
+    });
 
     await prisma.emailLog.create({
       data: {
