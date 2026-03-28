@@ -14,16 +14,21 @@ export function AttendeeNavigation({ session, mobile = false }: { session: Sessi
   return (
     <nav
       className={cn(
-        "rounded-[32px] border border-[#d7e0d3] bg-[#fbf7ef]/90 p-4 shadow-sm backdrop-blur",
-        mobile && "sticky bottom-4 border-none bg-transparent p-0 shadow-none",
+        "rounded-[22px] border border-[#d5ccbf]/80 bg-[#ffffff]/95 p-4 shadow-[0_18px_28px_-24px_rgba(17,19,21,0.25)]",
+        mobile && "sticky bottom-4 border-[#d5ccbf]/70 bg-[#ffffff] p-0 shadow-[0_18px_28px_-24px_rgba(17,19,21,0.25)]",
       )}
     >
       <div className={cn("mb-6 space-y-1 px-2", mobile && "hidden")}>
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#6a7b71]">Teilnehmerbereich</p>
-        <h2 className="text-xl font-semibold text-[#173325]">{session.user.name ?? "Gast"}</h2>
-        <p className="text-sm leading-6 text-[#5f7267]">Agenda, Logistik und aktuelle Hinweise immer griffbereit.</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-[#6a6256]">Teilnehmerbereich</p>
+        <h2 className="font-manrope text-xl font-semibold tracking-[-0.04em] text-[#111315]">{session.user.name ?? "Gast"}</h2>
+        <p className="text-sm leading-6 text-[#59616a]">Agenda, Anreise und Hinweise.</p>
       </div>
-      <div className={cn("flex flex-col gap-2", mobile && "grid grid-cols-4 rounded-[28px] border border-[#d7e0d3] bg-[#fbf7ef]/95 p-2 shadow-lg")}>
+      <div
+        className={cn(
+          "flex flex-col gap-2",
+          mobile && "grid grid-cols-4 rounded-[18px] border border-[#d5ccbf] bg-[#ffffff] p-2 shadow-[0_18px_28px_-24px_rgba(17,19,21,0.25)]",
+        )}
+      >
         {attendeeNavigation.map((item) => {
           const active = pathname === item.href;
           const Icon = item.icon;
@@ -33,8 +38,9 @@ export function AttendeeNavigation({ session, mobile = false }: { session: Sessi
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-[#4b6054] transition-colors hover:bg-[#e8eee3] hover:text-[#173325]",
-                active && "bg-[#163224] text-[#fbf7ef] hover:bg-[#163224] hover:text-[#fbf7ef]",
+                "flex items-center gap-3 rounded-[16px] px-4 py-3 text-sm font-medium text-[#5f584f] transition-all hover:bg-[#f0ebe3] hover:text-[#111315]",
+                active &&
+                  "bg-[#17191c] text-white shadow-[0_20px_36px_-24px_rgba(17,19,21,0.65)] hover:bg-[#17191c] hover:text-white",
                 mobile && "flex-col gap-2 px-2 py-3 text-[11px] text-center",
               )}
             >
@@ -45,19 +51,19 @@ export function AttendeeNavigation({ session, mobile = false }: { session: Sessi
         })}
       </div>
       {!mobile ? (
-        <div className="mt-6 rounded-[28px] bg-[#173325] p-4 text-[#fbf7ef]">
+        <div className="mt-6 rounded-[18px] border border-[#d5ccbf] bg-[#f0ebe3] p-4 text-[#111315]">
           <div className="mb-3 flex items-center gap-2 text-sm font-semibold">
             <CalendarDays className="size-4" />
-            Event Quick Facts
+            Auf einen Blick
           </div>
-          <ul className="space-y-2 text-sm text-[#dbe4de]">
+          <ul className="space-y-2 text-sm text-[#59616a]">
             <li>14.-15. Mai 2026</li>
             <li>Dortmund Kongresszentrum</li>
-            <li>QR Check-in vor Ort</li>
+            <li>QR-Einlass vor Ort</li>
           </ul>
-          <div className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-[#c6d3cb]">
+          <div className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-[#255447]">
             <MapPinned className="size-3.5" />
-            Closed corporate event
+            Persönliche Einladung
           </div>
         </div>
       ) : null}

@@ -16,13 +16,19 @@ import { feedbackSchema } from "@/lib/validations";
 
 type FeedbackValues = z.infer<typeof feedbackSchema>;
 
+const feedbackRatingLabels: Record<string, string> = {
+  VERY_BAD: "Sehr schlecht",
+  BAD: "Schlecht",
+  OKAY: "In Ordnung",
+  GOOD: "Gut",
+  EXCELLENT: "Hervorragend",
+};
+
 export function FeedbackForm({
-  attendeeId,
   type,
   sessionId,
   title,
 }: {
-  attendeeId: string;
   type: FeedbackType;
   sessionId?: string;
   title: string;
@@ -41,7 +47,7 @@ export function FeedbackForm({
   const onSubmit = (values: FeedbackValues) => {
     setIsPending(true);
     startTransition(async () => {
-      const result = await submitFeedbackAction(attendeeId, values);
+      const result = await submitFeedbackAction(values);
       setIsPending(false);
 
       if (!result.ok) {
@@ -58,36 +64,39 @@ export function FeedbackForm({
   };
 
   return (
-    <form className="space-y-4 rounded-[28px] border border-[#d9e1d5] bg-white p-5" onSubmit={form.handleSubmit(onSubmit)}>
+    <form className="space-y-5 rounded-[20px] border border-[#e2dbd0] bg-white p-5" onSubmit={form.handleSubmit(onSubmit)}>
       <div>
-        <h3 className="text-lg font-semibold text-[#173325]">{title}</h3>
-        <p className="text-sm text-[#5d7065]">Kurzes, konkretes Feedback hilft dem Event-Team fuer die Nachbereitung.</p>
+        <h3 className="font-manrope text-lg font-semibold text-[#111315]">{title}</h3>
+        <p className="text-sm text-[#5d646b]">Teilen Sie kurz Ihren Eindruck.</p>
       </div>
       <div className="space-y-2">
         <Label>Bewertung</Label>
         <div className="grid gap-2 sm:grid-cols-5">
           {Object.values(FeedbackRating).map((rating) => (
-            <label key={rating} className="rounded-2xl border border-[#d7dfd3] px-3 py-3 text-center text-sm text-[#284334]">
+            <label
+              key={rating}
+              className="rounded-[16px] border border-[#ddd6cb] bg-[#f7f3ed] px-3 py-3 text-center text-sm text-[#16181a] transition-colors hover:bg-white"
+            >
               <input
                 type="radio"
                 className="sr-only"
                 checked={form.watch("rating") === rating}
                 onChange={() => form.setValue("rating", rating)}
               />
-              {rating}
+              {feedbackRatingLabels[rating] ?? rating}
             </label>
           ))}
         </div>
       </div>
       <div className="space-y-2">
         <Label htmlFor={`${title}-comment`}>Kommentar</Label>
-        <Textarea id={`${title}-comment`} placeholder="Ihr Eindruck, konkrete Hinweise, Verbesserungsvorschlaege" {...form.register("comment")} />
+        <Textarea id={`${title}-comment`} placeholder="Ihr Eindruck oder ein konkreter Hinweis" {...form.register("comment")} />
       </div>
       <input type="hidden" {...form.register("type")} />
       <input type="hidden" {...form.register("sessionId")} />
       <Button type="submit" disabled={isPending}>
         {isPending ? <LoaderCircle className="mr-2 size-4 animate-spin" /> : null}
-        Feedback senden
+        Absenden
       </Button>
     </form>
   );

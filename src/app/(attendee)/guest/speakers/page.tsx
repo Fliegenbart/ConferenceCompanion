@@ -17,7 +17,7 @@ export default async function SpeakersPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Speaker" description="Profilkarten, Rollenbeschreibungen und Bezuge zur Agenda." />
+      <PageHeader eyebrow="Programm" title="Referenten" description="Wer auf der Bühne steht." />
       <div className="grid gap-4 lg:grid-cols-2">
         {attendee.event.speakers.map((speaker) => (
           <Card key={speaker.id} className="space-y-4 p-5">
@@ -27,12 +27,12 @@ export default async function SpeakersPage() {
                 <AvatarFallback>{initials(speaker.name.split(" ")[0], speaker.name.split(" ")[1])}</AvatarFallback>
               </Avatar>
               <div>
-                <h2 className="text-xl text-[#173325]">{speaker.name}</h2>
-                <p className="text-sm text-[#5f7267]">{speaker.role}</p>
-                {speaker.company ? <p className="text-sm text-[#5f7267]">{speaker.company}</p> : null}
+                <h2 className="font-manrope text-xl text-[#111315]">{speaker.name}</h2>
+                <p className="text-sm text-[#5d646b]">{speaker.role}</p>
+                {speaker.company ? <p className="text-sm text-[#5d646b]">{speaker.company}</p> : null}
               </div>
             </div>
-            <p className="text-sm leading-7 text-[#4b6155]">{speaker.bio}</p>
+            <p className="text-sm leading-7 text-[#5d646b]">{speaker.bio}</p>
           </Card>
         ))}
       </div>

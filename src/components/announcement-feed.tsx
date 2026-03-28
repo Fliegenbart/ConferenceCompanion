@@ -20,14 +20,14 @@ export function AnnouncementFeed({ items }: { items: AnnouncementFeedItem[] }) {
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Bell className="size-4 text-[#da4f29]" />
-                <h3 className="font-semibold text-[#173325]">{item.title}</h3>
+                <Bell className="size-4 text-[#255447]" />
+                <h3 className="font-manrope text-xl font-semibold tracking-[-0.04em] text-[#111315]">{item.title}</h3>
               </div>
-              <p className="text-sm leading-6 text-[#41584b]">{item.body}</p>
+              <p className="text-sm leading-6 text-[#59616a]">{item.body}</p>
             </div>
-            {item.pinned ? <Badge variant="accent">Pinned</Badge> : null}
+            {item.pinned ? <Badge variant="accent">Angepinnt</Badge> : null}
           </div>
-          <p className="text-xs uppercase tracking-[0.18em] text-[#708177]">{formatDateTime(item.publishedAt)}</p>
+          <p className="text-xs uppercase tracking-[0.18em] text-[#7a7f84]">{formatDateTime(item.publishedAt)}</p>
         </Card>
       ))}
     </div>

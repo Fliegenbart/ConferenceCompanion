@@ -18,7 +18,11 @@ export default async function MyAgendaPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Meine Agenda" description="Ihre ausgewaehlten Formate und persoenlichen Programmpunkte." />
+      <PageHeader
+        eyebrow="Teilnehmerbereich"
+        title="Meine Agenda"
+        description="Ihre gewählten Sessions."
+      />
       {attendee.sessionSelections.length ? (
         <div className="space-y-4">
           {attendee.sessionSelections.map((selection) => (
@@ -37,8 +41,8 @@ export default async function MyAgendaPage() {
       ) : (
         <EmptyState
           icon={CalendarCheck2}
-          title="Noch keine Sessions ausgewaehlt"
-          description="Sobald Sie Workshops oder Breakouts waehlen, erscheinen sie hier in Ihrer persoenlichen Agenda."
+          title="Noch nichts gewählt"
+          description="Wählen Sie in der Agenda Ihre Sessions."
         />
       )}
     </div>

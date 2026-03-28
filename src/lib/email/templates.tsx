@@ -40,9 +40,7 @@ function BaseEmailTemplate({ preview, heading, intro, ctaLabel, ctaHref, childre
             </Section>
           ) : null}
           <Hr style={dividerStyle} />
-          <Text style={footerStyle}>
-            Diese Nachricht wurde fuer eine geschlossene Veranstaltungsorganisation versendet.
-          </Text>
+          <Text style={footerStyle}>Nachricht zu Ihrer Veranstaltung.</Text>
         </Container>
       </Body>
     </Html>
@@ -59,9 +57,9 @@ export function InvitationEmailTemplate(props: {
     <BaseEmailTemplate
       preview={`Einladung zur ${props.eventName}`}
       heading={`Einladung zur ${props.eventName}`}
-      intro={`Guten Tag ${props.attendeeName}, Sie sind herzlich eingeladen. Bitte bestaetigen Sie Ihre Teilnahme ueber den folgenden Link.`}
+      intro={`Guten Tag ${props.attendeeName}, öffnen Sie den Link und bestätigen Sie Ihre Teilnahme.`}
       ctaHref={props.ctaHref}
-      ctaLabel="Registrierung oeffnen"
+      ctaLabel="Registrierung öffnen"
     >
       <Text style={detailStyle}>Veranstaltung: {props.eventName}</Text>
       <Text style={detailStyle}>Termin: {props.eventDate}</Text>
@@ -77,9 +75,9 @@ export function RegistrationConfirmationEmailTemplate(props: {
 }) {
   return (
     <BaseEmailTemplate
-      preview={`Bestaetigung fuer ${props.eventName}`}
-      heading="Ihre Registrierung wurde gespeichert"
-      intro={`Vielen Dank ${props.attendeeName}. Ihre Angaben fuer den Event Companion wurden erfolgreich uebernommen.`}
+      preview={`Bestätigung für ${props.eventName}`}
+      heading="Registrierung gespeichert"
+      intro={`Vielen Dank ${props.attendeeName}. Ihre Anmeldung ist gespeichert.`}
       ctaHref={props.ctaHref}
       ctaLabel="Zum Teilnehmerbereich"
     >
@@ -100,10 +98,10 @@ export function RegistrationUpdateEmailTemplate(props: {
   return (
     <BaseEmailTemplate
       preview={`Aktualisierung Ihrer Angaben`}
-      heading="Ihre Registrierung wurde aktualisiert"
-      intro={`Hallo ${props.attendeeName}, Ihre Angaben zur ${props.eventName} wurden aktualisiert.`}
+      heading="Ihre Angaben wurden aktualisiert"
+      intro={`Hallo ${props.attendeeName}, Ihre Angaben zu ${props.eventName} wurden aktualisiert.`}
       ctaHref={props.ctaHref}
-      ctaLabel="Details ansehen"
+      ctaLabel="Angaben ansehen"
     />
   );
 }
@@ -116,10 +114,10 @@ export function ReminderEmailTemplate(props: {
   return (
     <BaseEmailTemplate
       preview={`Erinnerung an ${props.eventName}`}
-      heading="Erinnerung zur Veranstaltung"
-      intro={`Hallo ${props.attendeeName}, hier ist eine kurze Erinnerung an Ihre bevorstehende Teilnahme an ${props.eventName}.`}
+      heading="Kurze Erinnerung"
+      intro={`Hallo ${props.attendeeName}, Ihr Termin für ${props.eventName} rückt näher.`}
       ctaHref={props.ctaHref}
-      ctaLabel="Event Companion oeffnen"
+      ctaLabel="Zur Veranstaltung"
     />
   );
 }
@@ -135,7 +133,7 @@ export function AnnouncementEmailTemplate(props: {
       heading={props.title}
       intro={props.body}
       ctaHref={props.ctaHref}
-      ctaLabel="Update im Companion ansehen"
+      ctaLabel="Nachricht öffnen"
     />
   );
 }
@@ -145,35 +143,35 @@ export function MagicLinkEmailTemplate(props: {
 }) {
   return (
     <BaseEmailTemplate
-      preview="Ihr sicherer Zugang zu ConferenceCompanion"
-      heading="Sicherer Zugang"
-      intro="Bitte verwenden Sie den folgenden Button, um sich in Ihren persoenlichen Bereich einzuloggen."
+      preview="Ihr Link zur Anmeldung"
+      heading="Anmelden"
+      intro="Öffnen Sie den Link und gehen Sie direkt in Ihren Bereich."
       ctaHref={props.url}
       ctaLabel="Jetzt anmelden"
     >
-      <Text style={footerStyle}>Der Link ist zeitlich begrenzt und nur fuer Sie bestimmt.</Text>
+      <Text style={footerStyle}>Der Link ist zeitlich begrenzt und nur für Sie bestimmt.</Text>
     </BaseEmailTemplate>
   );
 }
 
 const bodyStyle = {
-  backgroundColor: "#eef2ec",
+  backgroundColor: "#faf9f8",
   fontFamily: "Helvetica, Arial, sans-serif",
   margin: "0 auto",
   padding: "32px 12px",
 };
 
 const containerStyle = {
-  backgroundColor: "#fbf7ef",
-  border: "1px solid #d8dfd5",
-  borderRadius: "24px",
+  backgroundColor: "#ffffff",
+  border: "1px solid rgba(221, 214, 203, 0.9)",
+  borderRadius: "20px",
   margin: "0 auto",
   maxWidth: "620px",
   padding: "40px",
 };
 
 const eyebrowStyle = {
-  color: "#33674a",
+  color: "#6b7279",
   fontSize: "13px",
   fontWeight: 700,
   letterSpacing: "0.14em",
@@ -182,7 +180,7 @@ const eyebrowStyle = {
 };
 
 const headingStyle = {
-  color: "#12261c",
+  color: "#111315",
   fontSize: "30px",
   fontWeight: 700,
   lineHeight: "1.2",
@@ -190,16 +188,16 @@ const headingStyle = {
 };
 
 const introStyle = {
-  color: "#31453b",
+  color: "#5d646b",
   fontSize: "16px",
   lineHeight: "1.7",
   margin: "0 0 20px",
 };
 
 const buttonStyle = {
-  backgroundColor: "#da4f29",
-  borderRadius: "999px",
-  color: "#fff8f1",
+  backgroundColor: "#111315",
+  borderRadius: "14px",
+  color: "#ffffff",
   fontSize: "15px",
   fontWeight: 700,
   padding: "14px 24px",
@@ -207,19 +205,19 @@ const buttonStyle = {
 };
 
 const dividerStyle = {
-  borderColor: "#d8dfd5",
+  borderColor: "#ddd6cb",
   margin: "28px 0 20px",
 };
 
 const detailStyle = {
-  color: "#31453b",
+  color: "#5d646b",
   fontSize: "14px",
   lineHeight: "1.65",
   margin: "0 0 8px",
 };
 
 const footerStyle = {
-  color: "#5b6d63",
+  color: "#717976",
   fontSize: "13px",
   lineHeight: "1.5",
   margin: "0",

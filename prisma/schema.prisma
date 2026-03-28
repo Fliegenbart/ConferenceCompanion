@@ -412,6 +412,16 @@ model AuditLog {
   @@index([eventId, createdAt])
 }
 
+model RateLimitEntry {
+  key       String   @id
+  count     Int
+  resetAt   DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([resetAt])
+}
+
 model Feedback {
   id          String         @id @default(cuid())
   eventId     String

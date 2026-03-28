@@ -11,11 +11,11 @@ export function AdminNavigation({ session }: { session: Session }) {
   const pathname = usePathname();
 
   return (
-    <nav className="rounded-[32px] border border-[#d7e0d3] bg-[#fbf7ef]/90 p-4 shadow-sm backdrop-blur">
+    <nav className="rounded-[22px] border border-[#d5ccbf]/80 bg-[#ffffff]/95 p-4 shadow-[0_18px_28px_-24px_rgba(17,19,21,0.25)]">
       <div className="mb-6 space-y-1 px-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#6a7b71]">Organizer Dashboard</p>
-        <h2 className="text-xl font-semibold text-[#173325]">{session.user.name ?? "Admin"}</h2>
-        <p className="text-sm leading-6 text-[#5f7267]">Verwaltung von Registrierungen, Agenda, Kommunikation und Check-in.</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-[#6a6256]">Administrationsbereich</p>
+        <h2 className="font-manrope text-xl font-semibold tracking-[-0.04em] text-[#111315]">{session.user.name ?? "Admin"}</h2>
+        <p className="text-sm leading-6 text-[#59616a]">Einladungen, Agenda, Inhalte und Einlass.</p>
       </div>
       <div className="flex flex-col gap-2">
         {adminNavigation.map((item) => {
@@ -27,8 +27,9 @@ export function AdminNavigation({ session }: { session: Session }) {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-[#4b6054] transition-colors hover:bg-[#e8eee3] hover:text-[#173325]",
-                active && "bg-[#163224] text-[#fbf7ef] hover:bg-[#163224] hover:text-[#fbf7ef]",
+                "flex items-center gap-3 rounded-[16px] px-4 py-3 text-sm font-medium text-[#5f584f] transition-all hover:bg-[#f0ebe3] hover:text-[#111315]",
+                active &&
+                  "bg-[#17191c] text-white shadow-[0_20px_36px_-24px_rgba(17,19,21,0.65)] hover:bg-[#17191c] hover:text-white",
               )}
             >
               <Icon className="size-4" />

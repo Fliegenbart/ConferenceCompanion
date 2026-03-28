@@ -31,3 +31,11 @@ export function requireRole(session: Session | null, role: AdminRole) {
     redirect("/login?reason=forbidden");
   }
 }
+
+export function requireMinimumRole(session: Session | null, role: AdminRole) {
+  if (!hasMinimumRole(session, role)) {
+    redirect("/login?reason=forbidden");
+  }
+
+  return session;
+}

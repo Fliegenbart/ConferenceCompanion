@@ -1,30 +1,31 @@
 import type { Metadata } from "next";
-import { Manrope, Newsreader } from "next/font/google";
+import { Inter, Sora } from "next/font/google";
 
 import { Providers } from "@/components/providers";
 import { PwaRegister } from "@/components/pwa-register";
 import "./globals.css";
 
-const manrope = Manrope({
+const manrope = Sora({
   variable: "--font-manrope",
   subsets: ["latin"],
+  weight: ["500", "600", "700"],
 });
 
-const newsreader = Newsreader({
-  variable: "--font-newsreader",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
   title: "ConferenceCompanion",
-  description: "Private invitation-only conference companion for registrations, agenda, logistics and participant communication.",
+  description: "Privater, einladungsbasierter Konferenzbegleiter für Registrierung, Agenda, Logistik und Teilnehmerkommunikation.",
   applicationName: "ConferenceCompanion",
 };
 
 export const dynamic = "force-dynamic";
 
 export const viewport = {
-  themeColor: "#163224",
+  themeColor: "#111315",
 };
 
 export default function RootLayout({
@@ -34,8 +35,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="de">
-      <body
-        className={`${manrope.variable} ${newsreader.variable} antialiased`}
+    <body
+        className={`${manrope.variable} ${inter.variable} antialiased`}
       >
         <Providers>
           <PwaRegister />

@@ -96,7 +96,10 @@ export async function getAttendeePortal(attendeeId: string) {
 }
 
 export async function getAdminDashboard(eventId: string) {
-  const [invited, registered, declined, checkedIn, attendees, sessions, recentLogs] = await Promise.all([
+  const [event, invited, registered, declined, checkedIn, attendees, sessions, recentLogs] = await Promise.all([
+    prisma.event.findUniqueOrThrow({
+      where: { id: eventId },
+    }),
     prisma.attendee.count({
       where: {
         eventId,
@@ -157,6 +160,7 @@ export async function getAdminDashboard(eventId: string) {
   ]);
 
   return {
+    event,
     invited,
     registered,
     declined,

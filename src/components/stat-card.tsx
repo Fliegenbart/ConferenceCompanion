@@ -14,16 +14,17 @@ export function StatCard({
   hint?: string;
 }) {
   return (
-    <Card className="space-y-4 p-5">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-[#688073]">{label}</p>
-        <div className="rounded-2xl bg-[#e7eee2] p-2 text-[#395642]">
+    <Card className="relative overflow-hidden p-5">
+      <div className="absolute inset-x-5 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(17,19,21,0.14),transparent)]" />
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#6a6256]">{label}</p>
+        <div className="rounded-[14px] bg-[#17191c] p-2.5 text-[#f7f3ed] shadow-[0_14px_24px_-20px_rgba(17,19,21,0.9)]">
           <Icon className="size-4" />
         </div>
       </div>
-      <div>
-        <p className="text-3xl font-semibold text-[#173325]">{value}</p>
-        {hint ? <p className="mt-1 text-sm text-[#688073]">{hint}</p> : null}
+      <div className="mt-6">
+        <p className="font-manrope text-[2.75rem] font-semibold leading-none tracking-[-0.07em] text-[#111315]">{value}</p>
+        {hint ? <p className="mt-2 text-sm text-[#59616a]">{hint}</p> : null}
       </div>
     </Card>
   );

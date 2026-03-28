@@ -17,16 +17,15 @@ export default async function FeedbackPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Feedback" description="Gesamtfeedback und optionales Session-Feedback fuer die Veranstaltungsnachbereitung." />
+      <PageHeader title="Rückmeldung" description="Kurz sagen, was gut war und was fehlt." />
       <div className="space-y-4">
-        <FeedbackForm attendeeId={attendee.id} type={FeedbackType.EVENT} title="Gesamtfeedback zur Veranstaltung" />
+        <FeedbackForm type={FeedbackType.EVENT} title="Veranstaltung bewerten" />
         {attendee.sessionSelections.map((selection) => (
           <FeedbackForm
             key={selection.id}
-            attendeeId={attendee.id}
             type={FeedbackType.SESSION}
             sessionId={selection.sessionId}
-            title={`Session Feedback: ${selection.session.title}`}
+            title={`Session bewerten: ${selection.session.title}`}
           />
         ))}
       </div>

@@ -25,6 +25,8 @@
 *.pem
 .playwright-cli
 tmp/
+output/
+simulator-conferencecompanion*.png
 
 # debug
 npm-debug.log*

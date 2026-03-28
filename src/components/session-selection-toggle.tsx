@@ -8,11 +8,9 @@ import { toggleSessionSelectionAction } from "@/actions/attendee";
 import { Button } from "@/components/ui/button";
 
 export function SessionSelectionToggle({
-  attendeeId,
   sessionId,
   selected,
 }: {
-  attendeeId: string;
   sessionId: string;
   selected: boolean;
 }) {
@@ -27,7 +25,7 @@ export function SessionSelectionToggle({
         setIsPending(true);
 
         startTransition(async () => {
-          const result = await toggleSessionSelectionAction(attendeeId, sessionId, !selected);
+          const result = await toggleSessionSelectionAction(sessionId, !selected);
           setIsPending(false);
 
           if (!result.ok) {

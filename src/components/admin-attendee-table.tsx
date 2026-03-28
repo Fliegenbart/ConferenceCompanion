@@ -2,7 +2,7 @@
 
 import type { InvitationStatus, RegistrationStatus } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
-import { ClockAlert, MailPlus, Send, ShieldCheck } from "lucide-react";
+import { CheckCircle2, ClockAlert, MailPlus, ScanLine, Send, ShieldCheck } from "lucide-react";
 import { startTransition } from "react";
 import { toast } from "sonner";
 
@@ -23,15 +23,36 @@ type AttendeeRow = {
   accessibilityFlag: boolean;
 };
 
+const invitationStatusLabels: Record<InvitationStatus, string> = {
+  DRAFT: "Entwurf",
+  SENT: "Gesendet",
+  OPENED: "Geöffnet",
+  REGISTERED: "Registriert",
+  DECLINED: "Abgelehnt",
+  EXPIRED: "Abgelaufen",
+};
+
+const registrationStatusLabels: Record<RegistrationStatus, string> = {
+  PENDING: "Ausstehend",
+  COMPLETED: "Abgeschlossen",
+  UPDATED: "Aktualisiert",
+  DECLINED: "Abgelehnt",
+  CANCELLED: "Storniert",
+};
+
 export function AdminAttendeeTable({ data }: { data: AttendeeRow[] }) {
+  const registeredCount = data.filter((row) => row.registrationStatus === "COMPLETED" || row.registrationStatus === "UPDATED").length;
+  const checkedInCount = data.filter((row) => row.checkedIn).length;
+  const attentionCount = data.filter((row) => row.dietaryFlag || row.accessibilityFlag).length;
+
   const columns: ColumnDef<AttendeeRow>[] = [
     {
       accessorKey: "name",
       header: "Teilnehmer",
       cell: ({ row }) => (
         <div>
-          <p className="font-semibold text-[#173325]">{row.original.name}</p>
-          <p className="text-xs text-[#6a7b71]">{row.original.email}</p>
+          <p className="font-medium text-[#111315]">{row.original.name}</p>
+          <p className="text-xs text-[#7a7f84]">{row.original.email}</p>
         </div>
       ),
     },
@@ -42,31 +63,29 @@ export function AdminAttendeeTable({ data }: { data: AttendeeRow[] }) {
     {
       accessorKey: "invitationStatus",
       header: "Einladung",
-      cell: ({ row }) => <Badge variant="outline">{row.original.invitationStatus}</Badge>,
+      cell: ({ row }) => <Badge variant="outline">{invitationStatusLabels[row.original.invitationStatus]}</Badge>,
     },
     {
       accessorKey: "registrationStatus",
       header: "Registrierung",
       cell: ({ row }) => (
         <Badge variant={row.original.registrationStatus === "COMPLETED" ? "positive" : "default"}>
-          {row.original.registrationStatus}
+          {registrationStatusLabels[row.original.registrationStatus]}
         </Badge>
       ),
     },
     {
       accessorKey: "checkedIn",
-      header: "Check-in",
-      cell: ({ row }) => (
-        <Badge variant={row.original.checkedIn ? "positive" : "outline"}>{row.original.checkedIn ? "Vor Ort" : "Offen"}</Badge>
-      ),
+      header: "Einlass",
+      cell: ({ row }) => <Badge variant={row.original.checkedIn ? "positive" : "outline"}>{row.original.checkedIn ? "Vor Ort" : "Offen"}</Badge>,
     },
     {
       id: "flags",
-      header: "Flags",
+      header: "Merkmale",
       cell: ({ row }) => (
         <div className="flex gap-2">
-          {row.original.dietaryFlag ? <Badge variant="accent">Dietary</Badge> : null}
-          {row.original.accessibilityFlag ? <Badge variant="accent">Access</Badge> : null}
+          {row.original.dietaryFlag ? <Badge variant="accent">Ernährung</Badge> : null}
+          {row.original.accessibilityFlag ? <Badge variant="accent">Barrierefreiheit</Badge> : null}
         </div>
       ),
     },
@@ -76,7 +95,7 @@ export function AdminAttendeeTable({ data }: { data: AttendeeRow[] }) {
       cell: ({ row }) => (
         <div className="flex flex-wrap gap-2">
           <Button
-            variant="ghost"
+            variant="secondary"
             size="sm"
             onClick={() =>
               startTransition(async () => {
@@ -93,7 +112,7 @@ export function AdminAttendeeTable({ data }: { data: AttendeeRow[] }) {
             Einladung
           </Button>
           <Button
-            variant="ghost"
+            variant="secondary"
             size="sm"
             onClick={() =>
               startTransition(async () => {
@@ -107,10 +126,10 @@ export function AdminAttendeeTable({ data }: { data: AttendeeRow[] }) {
             }
           >
             <Send className="mr-2 size-4" />
-            Bestaetigung
+            Bestätigung
           </Button>
           <Button
-            variant="ghost"
+            variant="secondary"
             size="sm"
             onClick={() =>
               startTransition(async () => {
@@ -124,7 +143,7 @@ export function AdminAttendeeTable({ data }: { data: AttendeeRow[] }) {
             }
           >
             <ClockAlert className="mr-2 size-4" />
-            Reminder
+            Erinnerung
           </Button>
         </div>
       ),
@@ -133,14 +152,24 @@ export function AdminAttendeeTable({ data }: { data: AttendeeRow[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-semibold text-[#173325]">Attendee Management</h2>
-          <p className="text-sm text-[#5d7065]">Suche, Statuspruefung und direkte Kommunikationsaktionen.</p>
+      <div className="flex flex-col gap-4 rounded-[22px] border border-[#ddd6cb] bg-white p-5 shadow-[0_24px_46px_-34px_rgba(17,19,21,0.24)] md:flex-row md:items-start md:justify-between">
+        <div className="space-y-2">
+          <h2 className="font-manrope text-2xl font-semibold tracking-[-0.04em] text-[#111315]">Teilnehmer</h2>
+          <p className="text-sm text-[#59616a]">Suchen, filtern und Nachrichten senden.</p>
         </div>
-        <div className="inline-flex items-center gap-2 rounded-full bg-[#eef3eb] px-4 py-2 text-sm text-[#395642]">
-          <ShieldCheck className="size-4" />
-          Serverseitig rollenbasiert geschuetzt
+        <div className="flex flex-wrap gap-2">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#d5ccbf] bg-[#f7f3ed] px-4 py-2 text-sm text-[#255447]">
+            <CheckCircle2 className="size-4" />
+            {registeredCount} registriert
+          </div>
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#d5ccbf] bg-[#f7f3ed] px-4 py-2 text-sm text-[#255447]">
+            <ScanLine className="size-4" />
+            {checkedInCount} vor Ort
+          </div>
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#d5ccbf] bg-[#f7f3ed] px-4 py-2 text-sm text-[#255447]">
+            <ShieldCheck className="size-4" />
+            {attentionCount} mit Hinweisen
+          </div>
         </div>
       </div>
       <DataTable columns={columns} data={data} filterPlaceholder="Name, E-Mail oder Unternehmen durchsuchen" />

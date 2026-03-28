@@ -21,14 +21,14 @@ export function AppShell({
   return (
     <div
       className={cn(
-        "min-h-screen bg-[radial-gradient(circle_at_top,#dfe8da_0%,#eef2ec_42%,#f6f4ee_100%)]",
-        variant === "admin" && "bg-[radial-gradient(circle_at_top,#d9e3dc_0%,#eef1ea_35%,#f6f1ea_100%)]",
+        "min-h-screen bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.78)_0%,rgba(245,241,234,0.92)_32%,#f5f1ea_100%)]",
+        variant === "admin" && "bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.88)_0%,rgba(243,238,229,0.94)_36%,#f3ede5_100%)]",
       )}
     >
-      <div className="mx-auto flex min-h-screen max-w-[1480px] flex-col px-4 py-4 md:px-6 md:py-6 lg:flex-row lg:gap-6">
+      <div className="mx-auto flex min-h-screen max-w-[1600px] flex-col px-4 py-4 md:px-6 md:py-6 lg:flex-row lg:gap-6">
         <aside className="hidden w-72 shrink-0 lg:block">{navigation}</aside>
         <div className="flex min-h-screen flex-1 flex-col">
-          <header className="sticky top-0 z-20 mb-4 rounded-[32px] border border-[#d7e0d3] bg-[#fbf7ef]/85 px-5 py-4 shadow-sm backdrop-blur">
+          <header className="sticky top-0 z-20 mb-4 rounded-[22px] border border-[#d5ccbf]/80 bg-[#ffffff]/92 px-5 py-4 shadow-[0_18px_28px_-24px_rgba(17,19,21,0.28)]">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <BrandMark />
               <UserMenu session={session} />

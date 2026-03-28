@@ -43,22 +43,38 @@ export default async function InvitationPage({ params }: { params: Promise<{ tok
     : [];
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#dfe8da_0%,#eef2ec_45%,#f6f4ee_100%)] px-4 py-8 md:px-6">
+    <div className="min-h-screen px-4 py-8 md:px-6">
       <div className="mx-auto max-w-4xl space-y-6">
-        <Card className="space-y-5 bg-[#163224] p-8 text-[#fbf7ef]">
-          <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#c7d4cd]">Private Invitation</p>
-            <h1 className="text-4xl">{invitation.attendee.event.name}</h1>
-            <p className="max-w-2xl text-base leading-7 text-[#d6e1db]">
-              Guten Tag {invitation.attendee.firstName} {invitation.attendee.lastName}, bitte vervollstaendigen Sie hier Ihre Registrierung fuer die geschlossene Veranstaltung.
-            </p>
+        <Card className="relative overflow-hidden border-[#1b1d20] bg-[#17191c] p-0 text-white">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.08)_0%,transparent_32%),linear-gradient(180deg,#1a1c20_0%,#111315_100%)]" />
+          <div className="relative space-y-5 p-8 text-white">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#d8d2ca]">
+                Private Einladung
+              </span>
+              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#d8d2ca]">
+                Schritt 1 von 2
+              </span>
+            </div>
+            <div className="space-y-3">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#d8d2ca]">{invitation.attendee.event.name}</p>
+              <h1 className="font-manrope text-5xl tracking-[-0.06em]">Teilnahme bestätigen.</h1>
+              <p className="max-w-xl text-base leading-7 text-[#c9c4bd]">
+                Hallo {invitation.attendee.firstName}, ergänzen Sie kurz Ihre Angaben und bestätigen Sie Ihre Teilnahme.
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-[18px] border border-white/10 bg-white/5 px-4 py-3 text-sm text-[#c9c4bd]">Persönlicher Link</div>
+              <div className="rounded-[18px] border border-white/10 bg-white/5 px-4 py-3 text-sm text-[#c9c4bd]">Angaben ergänzen</div>
+              <div className="rounded-[18px] border border-white/10 bg-white/5 px-4 py-3 text-sm text-[#c9c4bd]">Bestätigung erhalten</div>
+            </div>
           </div>
         </Card>
         <Card className="p-8">
           <div className="mb-8 space-y-2">
-            <h2 className="text-2xl font-semibold text-[#173325]">Registrierung</h2>
-            <p className="text-sm leading-6 text-[#5d7065]">
-              Die Angaben werden ausschliesslich fuer Organisation, Betreuung und Event-Kommunikation verwendet.
+            <h2 className="font-manrope text-3xl font-semibold tracking-[-0.05em] text-[#111315]">Ihre Angaben</h2>
+            <p className="text-sm leading-6 text-[#59616a]">
+              Wir nutzen Ihre Angaben für Planung, Anreise und Rückfragen.
             </p>
           </div>
           <RegistrationForm

@@ -25,18 +25,20 @@ export function SessionCard({
     <Card className="space-y-4 p-5">
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
-          <h3 className="text-lg font-semibold text-[#173325]">{title}</h3>
-          {subtitle ? <p className="text-sm text-[#5e7066]">{subtitle}</p> : null}
+          <h3 className="font-manrope text-2xl font-semibold tracking-[-0.05em] text-[#111315]">{title}</h3>
+          {subtitle ? <p className="text-sm text-[#59616a]">{subtitle}</p> : null}
         </div>
         {featured ? (
           <Badge variant="accent" className="gap-1">
             <Star className="size-3.5" />
-            Featured
+            Highlight
           </Badge>
         ) : null}
       </div>
-      <p className="text-sm leading-6 text-[#3d5447]">{description}</p>
-      <div className="flex flex-wrap gap-4 text-sm text-[#51665a]">
+      <p className="overflow-hidden text-sm leading-6 text-[#59616a] [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">
+        {description}
+      </p>
+      <div className="flex flex-wrap gap-4 text-sm text-[#5f584f]">
         <span className="inline-flex items-center gap-2">
           <Clock3 className="size-4" />
           {formatDateTime(timeRange.startAt)} - {formatDateTime(timeRange.endAt, "HH:mm")}

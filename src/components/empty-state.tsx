@@ -12,9 +12,9 @@ export function EmptyState({
   description: string;
 }) {
   return (
-    <Card className="border-dashed bg-[#fafcf8]">
+    <Card className="border-dashed border-[#d5ccbf] bg-[#f7f3ed]">
       <CardHeader>
-        <div className="mb-4 flex size-12 items-center justify-center rounded-2xl bg-[#e8eee3] text-[#476253]">
+        <div className="mb-4 flex size-12 items-center justify-center rounded-[16px] border border-[#d5ccbf] bg-[#ffffff] text-[#255447]">
           <Icon className="size-5" />
         </div>
         <CardTitle>{title}</CardTitle>

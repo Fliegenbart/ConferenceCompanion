@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 
 import { requireAdminSession } from "@/lib/auth";
 import { createAuditLog } from "@/lib/audit";
+import { requireMinimumRole } from "@/lib/permissions";
 import { getCurrentEventOrThrow } from "@/lib/data";
 import { sendTransactionalEmail } from "@/lib/email/mailer";
 import {
@@ -25,7 +26,7 @@ import {
   sessionSchema,
   venueInfoSchema,
 } from "@/lib/validations";
-import { createCheckInToken, generateInvitationToken, hashToken, verifyCheckInToken } from "@/lib/tokens";
+import { generateInvitationToken, hashToken, verifyCheckInToken } from "@/lib/tokens";
 
 function isTruthy(value: FormDataEntryValue | null) {
   return value === "on" || value === "true" || value === "1";
@@ -98,7 +99,7 @@ async function issueInvitation(attendeeId: string, actorUserId?: string | null) 
     entityType: "invitation",
     entityId: attendeeId,
     action: attendee.invitation ? "resent" : "created",
-    summary: `Einladung fuer ${attendee.email} versendet`,
+    summary: `Einladung für ${attendee.email} versendet`,
   });
 }
 
@@ -110,17 +111,11 @@ async function sendConfirmation(attendeeId: string, actorUserId?: string | null)
     },
   });
 
-  const qrToken = await createCheckInToken({
-    attendeeId: attendee.id,
-    eventId: attendee.eventId,
-    email: attendee.email,
-  });
-
   await sendTransactionalEmail({
     attendeeId,
     eventId: attendee.eventId,
     to: attendee.email,
-    subject: "Ihre Registrierungsbestaetigung",
+    subject: "Ihre Registrierungsbestätigung",
     type: EmailType.REGISTRATION_CONFIRMATION,
     react: (
       <RegistrationConfirmationEmailTemplate
@@ -128,13 +123,12 @@ async function sendConfirmation(attendeeId: string, actorUserId?: string | null)
         eventName={attendee.event.name}
         summary={[
           `Teilnahme: ${attendee.attendanceResponse === "YES" ? "zugesagt" : attendee.attendanceResponse === "NO" ? "abgesagt" : "offen"}`,
-          `Hotel benoetigt: ${attendee.hotelRequired ? "Ja" : "Nein"}`,
-          "QR Check-in aktiviert",
+          `Hotel benötigt: ${attendee.hotelRequired ? "Ja" : "Nein"}`,
+          "QR-Einlass aktiviert",
         ]}
         ctaHref={absoluteUrl(`/login?email=${encodeURIComponent(attendee.email)}`)}
       />
     ),
-    metadata: { qrToken },
   });
 
   await prisma.attendee.update({
@@ -150,12 +144,13 @@ async function sendConfirmation(attendeeId: string, actorUserId?: string | null)
     entityType: "registration_confirmation",
     entityId: attendeeId,
     action: "resent",
-    summary: `Bestaetigung fuer ${attendee.email} erneut versendet`,
+    summary: `Bestätigung für ${attendee.email} erneut versendet`,
   });
 }
 
 export async function createAttendeeInviteAction(formData: FormData) {
   const session = await requireAdminSession();
+  requireMinimumRole(session, AdminRole.EVENT_ADMIN);
   const event = await getCurrentEventOrThrow(session.user.eventId ?? undefined);
 
   const payload = attendeeInviteSchema.safeParse({
@@ -167,7 +162,7 @@ export async function createAttendeeInviteAction(formData: FormData) {
   });
 
   if (!payload.success) {
-    return { ok: false, message: payload.error.issues[0]?.message ?? "Bitte pruefen Sie die Eingaben." };
+    return { ok: false, message: payload.error.issues[0]?.message ?? "Bitte prüfen Sie die Eingaben." };
   }
 
   const attendee = await prisma.attendee.create({
@@ -190,6 +185,7 @@ export async function createAttendeeInviteAction(formData: FormData) {
 
 export async function resendInvitationAction(attendeeId: string) {
   const session = await requireAdminSession();
+  requireMinimumRole(session, AdminRole.EVENT_ADMIN);
   await issueInvitation(attendeeId, session.user.id);
   revalidatePath("/admin/attendees");
   return { ok: true, message: "Einladung erneut versendet." };
@@ -197,13 +193,15 @@ export async function resendInvitationAction(attendeeId: string) {
 
 export async function resendConfirmationAction(attendeeId: string) {
   const session = await requireAdminSession();
+  requireMinimumRole(session, AdminRole.EVENT_ADMIN);
   await sendConfirmation(attendeeId, session.user.id);
   revalidatePath("/admin/attendees");
-  return { ok: true, message: "Bestaetigung erneut versendet." };
+  return { ok: true, message: "Bestätigung erneut versendet." };
 }
 
 export async function saveSessionAction(formData: FormData) {
   const session = await requireAdminSession();
+  requireMinimumRole(session, AdminRole.CONTENT_EDITOR);
   const event = await getCurrentEventOrThrow(session.user.eventId ?? undefined);
 
   const payload = sessionSchema.safeParse({
@@ -223,7 +221,7 @@ export async function saveSessionAction(formData: FormData) {
   });
 
   if (!payload.success) {
-    return { ok: false, message: payload.error.issues[0]?.message ?? "Session konnte nicht gespeichert werden." };
+    return { ok: false, message: payload.error.issues[0]?.message ?? "Sitzung konnte nicht gespeichert werden." };
   }
 
   const data = {
@@ -269,18 +267,19 @@ export async function saveSessionAction(formData: FormData) {
     entityType: "session",
     entityId: payload.data.id ?? null,
     action: payload.data.id ? "updated" : "created",
-    summary: `Session ${payload.data.title} gespeichert`,
+      summary: `Sitzung ${payload.data.title} gespeichert`,
   });
 
   revalidatePath("/admin/agenda");
   revalidatePath("/guest/agenda");
   revalidatePath("/guest/my-agenda");
 
-  return { ok: true, message: "Session gespeichert." };
+  return { ok: true, message: "Sitzung gespeichert." };
 }
 
 export async function deleteSessionAction(formData: FormData) {
   const session = await requireAdminSession();
+  requireMinimumRole(session, AdminRole.CONTENT_EDITOR);
   const id = String(formData.get("id"));
   await prisma.sessionModel.delete({ where: { id } });
   await createAuditLog({
@@ -289,15 +288,16 @@ export async function deleteSessionAction(formData: FormData) {
     entityType: "session",
     entityId: id,
     action: "deleted",
-    summary: `Session ${id} geloescht`,
+    summary: `Sitzung ${id} gelöscht`,
   });
   revalidatePath("/admin/agenda");
   revalidatePath("/guest/agenda");
-  return { ok: true, message: "Session geloescht." };
+  return { ok: true, message: "Sitzung gelöscht." };
 }
 
 export async function saveAnnouncementAction(formData: FormData) {
   const session = await requireAdminSession();
+  requireMinimumRole(session, AdminRole.CONTENT_EDITOR);
   const event = await getCurrentEventOrThrow(session.user.eventId ?? undefined);
   const payload = announcementSchema.safeParse({
     id: formData.get("id") || undefined,
@@ -332,15 +332,17 @@ export async function saveAnnouncementAction(formData: FormData) {
 }
 
 export async function deleteAnnouncementAction(formData: FormData) {
-  await requireAdminSession();
+  const session = await requireAdminSession();
+  requireMinimumRole(session, AdminRole.CONTENT_EDITOR);
   await prisma.announcement.delete({ where: { id: String(formData.get("id")) } });
   revalidatePath("/admin/content");
   revalidatePath("/guest/updates");
-  return { ok: true, message: "Announcement geloescht." };
+  return { ok: true, message: "Announcement gelöscht." };
 }
 
 export async function saveVenueInfoAction(formData: FormData) {
   const session = await requireAdminSession();
+  requireMinimumRole(session, AdminRole.CONTENT_EDITOR);
   const event = await getCurrentEventOrThrow(session.user.eventId ?? undefined);
   const payload = venueInfoSchema.safeParse({
     id: formData.get("id") || undefined,
@@ -351,7 +353,7 @@ export async function saveVenueInfoAction(formData: FormData) {
   });
 
   if (!payload.success) {
-    return { ok: false, message: payload.error.issues[0]?.message ?? "Venue Info konnte nicht gespeichert werden." };
+    return { ok: false, message: payload.error.issues[0]?.message ?? "Ortsinfo konnte nicht gespeichert werden." };
   }
 
   if (payload.data.id) {
@@ -370,19 +372,21 @@ export async function saveVenueInfoAction(formData: FormData) {
 
   revalidatePath("/admin/content");
   revalidatePath("/guest/info");
-  return { ok: true, message: "Venue Info gespeichert." };
+  return { ok: true, message: "Ortsinfo gespeichert." };
 }
 
 export async function deleteVenueInfoAction(formData: FormData) {
-  await requireAdminSession();
+  const session = await requireAdminSession();
+  requireMinimumRole(session, AdminRole.CONTENT_EDITOR);
   await prisma.venueInfo.delete({ where: { id: String(formData.get("id")) } });
   revalidatePath("/admin/content");
   revalidatePath("/guest/info");
-  return { ok: true, message: "Venue Info geloescht." };
+  return { ok: true, message: "Ortsinfo gelöscht." };
 }
 
 export async function saveFaqAction(formData: FormData) {
   const session = await requireAdminSession();
+  requireMinimumRole(session, AdminRole.CONTENT_EDITOR);
   const event = await getCurrentEventOrThrow(session.user.eventId ?? undefined);
   const payload = faqSchema.safeParse({
     id: formData.get("id") || undefined,
@@ -392,7 +396,7 @@ export async function saveFaqAction(formData: FormData) {
   });
 
   if (!payload.success) {
-    return { ok: false, message: payload.error.issues[0]?.message ?? "FAQ konnte nicht gespeichert werden." };
+    return { ok: false, message: payload.error.issues[0]?.message ?? "Häufige Frage konnte nicht gespeichert werden." };
   }
 
   if (payload.data.id) {
@@ -411,19 +415,21 @@ export async function saveFaqAction(formData: FormData) {
 
   revalidatePath("/admin/content");
   revalidatePath("/guest/info");
-  return { ok: true, message: "FAQ gespeichert." };
+  return { ok: true, message: "Häufige Frage gespeichert." };
 }
 
 export async function deleteFaqAction(formData: FormData) {
-  await requireAdminSession();
+  const session = await requireAdminSession();
+  requireMinimumRole(session, AdminRole.CONTENT_EDITOR);
   await prisma.faqItem.delete({ where: { id: String(formData.get("id")) } });
   revalidatePath("/admin/content");
   revalidatePath("/guest/info");
-  return { ok: true, message: "FAQ geloescht." };
+  return { ok: true, message: "Häufige Frage gelöscht." };
 }
 
 export async function saveDownloadAction(formData: FormData) {
   const session = await requireAdminSession();
+  requireMinimumRole(session, AdminRole.CONTENT_EDITOR);
   const event = await getCurrentEventOrThrow(session.user.eventId ?? undefined);
   const payload = downloadSchema.safeParse({
     id: formData.get("id") || undefined,
@@ -458,15 +464,17 @@ export async function saveDownloadAction(formData: FormData) {
 }
 
 export async function deleteDownloadAction(formData: FormData) {
-  await requireAdminSession();
+  const session = await requireAdminSession();
+  requireMinimumRole(session, AdminRole.CONTENT_EDITOR);
   await prisma.downloadAsset.delete({ where: { id: String(formData.get("id")) } });
   revalidatePath("/admin/content");
   revalidatePath("/guest/downloads");
-  return { ok: true, message: "Download geloescht." };
+  return { ok: true, message: "Download gelöscht." };
 }
 
 export async function updateEventSettingsAction(formData: FormData) {
   const session = await requireAdminSession();
+  requireMinimumRole(session, AdminRole.EVENT_ADMIN);
   const event = await getCurrentEventOrThrow(session.user.eventId ?? undefined);
   const payload = eventSettingsSchema.safeParse({
     registrationOpen: isTruthy(formData.get("registrationOpen")),
@@ -492,6 +500,7 @@ export async function updateEventSettingsAction(formData: FormData) {
 
 export async function sendAudienceMessageAction(formData: FormData) {
   const session = await requireAdminSession();
+  requireMinimumRole(session, AdminRole.EVENT_ADMIN);
   const event = await getCurrentEventOrThrow(session.user.eventId ?? undefined);
 
   const payload = messageSchema.safeParse({
@@ -547,16 +556,17 @@ export async function sendAudienceMessageAction(formData: FormData) {
     eventId: event.id,
     entityType: "message_broadcast",
     action: "sent",
-    summary: `Update an ${attendees.length} Empfaenger versendet`,
+    summary: `Update an ${attendees.length} Empfänger versendet`,
     payload: payload.data,
   });
 
   revalidatePath("/admin/messaging");
-  return { ok: true, message: `Update an ${attendees.length} Empfaenger versendet.` };
+  return { ok: true, message: `Update an ${attendees.length} Empfänger versendet.` };
 }
 
 export async function sendReminderAction(attendeeId: string) {
   const session = await requireAdminSession();
+  requireMinimumRole(session, AdminRole.EVENT_ADMIN);
   const attendee = await prisma.attendee.findUniqueOrThrow({
     where: { id: attendeeId },
     include: { event: true },
@@ -592,10 +602,11 @@ export async function sendReminderAction(attendeeId: string) {
 
 export async function processCheckInAction(input: { token?: string; attendeeId?: string; overrideReason?: string }) {
   const session = await requireAdminSession();
+  requireMinimumRole(session, AdminRole.CHECKIN_STAFF);
   const attendeeId = input.attendeeId || (input.token ? (await verifyCheckInToken(input.token)).attendeeId : null);
 
   if (!attendeeId) {
-    return { ok: false, message: "Kein gueltiger QR-Code oder Teilnehmer ausgewaehlt." };
+    return { ok: false, message: "Kein gültiger QR-Code oder Teilnehmer ausgewählt." };
   }
 
   const attendee = await prisma.attendee.findUniqueOrThrow({
@@ -603,7 +614,7 @@ export async function processCheckInAction(input: { token?: string; attendeeId?:
   });
 
   if (attendee.checkedInAt && !input.overrideReason && !session.user.roles.includes(AdminRole.SUPER_ADMIN)) {
-    return { ok: false, message: "Teilnehmer ist bereits eingecheckt. Fuer einen Override wird eine Begruendung benoetigt." };
+    return { ok: false, message: "Teilnehmer ist bereits eingecheckt. Für einen Override wird eine Begründung benötigt." };
   }
 
   await prisma.checkIn.create({

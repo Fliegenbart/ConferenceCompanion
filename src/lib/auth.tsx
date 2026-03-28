@@ -3,6 +3,7 @@ import { EmailType, UserKind } from "@prisma/client";
 import type { NextAuthOptions } from "next-auth";
 import EmailProvider from "next-auth/providers/email";
 import { getServerSession } from "next-auth";
+import { createElement } from "react";
 import { redirect } from "next/navigation";
 
 import { sendTransactionalEmail } from "@/lib/email/mailer";
@@ -19,8 +20,13 @@ const authProviders: NonNullable<NextAuthOptions["providers"]> = [
         to: identifier,
         subject: "Ihr Zugang zu ConferenceCompanion",
         type: EmailType.MAGIC_LINK,
-        react: <MagicLinkEmailTemplate url={url} />,
-        metadata: { url },
+        react: createElement(MagicLinkEmailTemplate, { url }),
+        metadata:
+          process.env.E2E_TESTING === "1"
+            ? {
+                e2eVerificationUrl: url,
+              }
+            : undefined,
       });
     },
   }),
@@ -111,6 +117,13 @@ export const authOptions: NextAuthOptions = {
             : null;
 
       if (!effectiveUser) {
+        token.sub = undefined;
+        token.email = undefined;
+        token.name = undefined;
+        token.kind = undefined;
+        token.roles = [];
+        token.attendeeId = null;
+        token.eventId = null;
         return token;
       }
 

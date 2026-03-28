@@ -4,11 +4,11 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "ConferenceCompanion",
     short_name: "Companion",
-    description: "Private conference companion for invited attendees and organizers.",
+    description: "Privater Konferenzbegleiter für eingeladene Teilnehmer und Organisatoren.",
     start_url: "/guest",
     display: "standalone",
-    background_color: "#eef2ec",
-    theme_color: "#163224",
+    background_color: "#f5f1ea",
+    theme_color: "#111315",
     icons: [
       {
         src: "/icon.svg",

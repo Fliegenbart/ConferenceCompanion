@@ -40,7 +40,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       <div className="relative max-w-sm">
-        <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-[#809283]" />
+        <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-[#717976]" />
         <Input
           value={globalFilter}
           onChange={(event) => setGlobalFilter(event.target.value)}
@@ -48,7 +48,7 @@ export function DataTable<TData, TValue>({
           placeholder={filterPlaceholder}
         />
       </div>
-      <div className="overflow-hidden rounded-[28px] border border-[#d9e1d5] bg-white shadow-sm">
+      <div className="overflow-hidden rounded-[20px] border border-[#ddd6cb] bg-white shadow-[0_18px_36px_-30px_rgba(17,19,21,0.3)]">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -74,7 +74,7 @@ export function DataTable<TData, TValue>({
               ) : (
                 <TableRow>
                   <TableCell className="h-24 text-center" colSpan={columns.length}>
-                    Keine Eintraege gefunden.
+                    Keine Einträge gefunden.
                   </TableCell>
                 </TableRow>
               )}

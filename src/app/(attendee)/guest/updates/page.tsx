@@ -15,7 +15,7 @@ export default async function UpdatesPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Updates" description="Alle organisatorischen Mitteilungen in chronologischer Reihenfolge." />
+      <PageHeader eyebrow="Aktuell" title="Mitteilungen" description="Wichtige Hinweise für Ihren Besuch." />
       <AnnouncementFeed items={attendee.event.announcements} />
     </div>
   );

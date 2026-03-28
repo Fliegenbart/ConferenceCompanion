@@ -2,9 +2,11 @@
 
 import { AttendanceResponse, EmailType, FeedbackType, InvitationStatus, RegistrationStatus, SessionSelectionStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { createElement } from "react";
 
 import { createAuditLog } from "@/lib/audit";
 import { CONSENT_VERSION } from "@/lib/constants";
+import { requireAttendeeSession } from "@/lib/auth";
 import { getInvitationContext } from "@/lib/data";
 import { sendTransactionalEmail } from "@/lib/email/mailer";
 import {
@@ -14,7 +16,6 @@ import {
 } from "@/lib/email/templates";
 import { prisma } from "@/lib/prisma";
 import { assertRateLimit } from "@/lib/rate-limit";
-import { createCheckInToken } from "@/lib/tokens";
 import { feedbackSchema, registrationSchema } from "@/lib/validations";
 
 type ActionResult = {
@@ -25,13 +26,13 @@ type ActionResult = {
 
 export async function submitRegistrationAction(token: string, payload: unknown): Promise<ActionResult> {
   try {
-    assertRateLimit(`registration:${token}`, 8, 5 * 60 * 1000);
+    await assertRateLimit(`registration:${token}`, 8, 5 * 60 * 1000);
     const parsed = registrationSchema.safeParse(payload);
 
     if (!parsed.success) {
       return {
         ok: false,
-        message: parsed.error.issues[0]?.message ?? "Bitte pruefen Sie Ihre Eingaben.",
+        message: parsed.error.issues[0]?.message ?? "Bitte prüfen Sie Ihre Eingaben.",
       };
     }
 
@@ -40,7 +41,7 @@ export async function submitRegistrationAction(token: string, payload: unknown):
     if (!invitation?.attendee) {
       return {
         ok: false,
-        message: "Der Einladungslink ist ungueltig oder bereits abgelaufen.",
+        message: "Der Einladungslink ist ungültig oder bereits abgelaufen.",
       };
     }
 
@@ -78,7 +79,7 @@ export async function submitRegistrationAction(token: string, payload: unknown):
         });
 
         if (session.capacity && !existingSelection && session.selections.length >= session.capacity) {
-          throw new Error(`Die Session "${session.title}" ist derzeit ausgebucht. Eine Warteliste folgt in einem spaeteren Release.`);
+        throw new Error(`Die Sitzung "${session.title}" ist derzeit ausgebucht. Eine Warteliste folgt in einer späteren Version.`);
         }
       }
 
@@ -190,16 +191,10 @@ export async function submitRegistrationAction(token: string, payload: unknown):
       return updatedAttendee;
     });
 
-    const qrToken = await createCheckInToken({
-      attendeeId: attendee.id,
-      eventId: attendee.eventId,
-      email: attendee.email,
-    });
-
     const summary = [
       `Teilnahme: ${parsed.data.attendanceResponse === AttendanceResponse.YES ? "zugesagt" : "abgesagt"}`,
-      `Hotel benoetigt: ${parsed.data.hotelRequired ? "Ja" : "Nein"}`,
-      "Datenschutz bestaetigt: Ja",
+      `Hotel benötigt: ${parsed.data.hotelRequired ? "Ja" : "Nein"}`,
+      "Datenschutz bestätigt: Ja",
       `Foto-/Videoeinwilligung: ${parsed.data.photoConsentAccepted ? "Ja" : "Nein"}`,
     ];
 
@@ -209,29 +204,24 @@ export async function submitRegistrationAction(token: string, payload: unknown):
       attendeeId: attendee.id,
       eventId: attendee.eventId,
       to: attendee.email,
-      subject: `Ihre Registrierung fuer ${attendee.event.name}`,
+      subject: `Ihre Registrierung für ${attendee.event.name}`,
       type:
         invitation.attendee.registrationStatus === RegistrationStatus.PENDING
           ? EmailType.REGISTRATION_CONFIRMATION
           : EmailType.REGISTRATION_UPDATE,
       react:
-        invitation.attendee.registrationStatus === RegistrationStatus.PENDING ? (
-          <RegistrationConfirmationEmailTemplate
-            attendeeName={`${attendee.firstName} ${attendee.lastName}`}
-            eventName={attendee.event.name}
-            summary={summary}
-            ctaHref={attendeePortalUrl}
-          />
-        ) : (
-          <RegistrationUpdateEmailTemplate
-            attendeeName={`${attendee.firstName} ${attendee.lastName}`}
-            eventName={attendee.event.name}
-            ctaHref={attendeePortalUrl}
-          />
-        ),
-      metadata: {
-        qrToken,
-      },
+        invitation.attendee.registrationStatus === RegistrationStatus.PENDING
+          ? createElement(RegistrationConfirmationEmailTemplate, {
+              attendeeName: `${attendee.firstName} ${attendee.lastName}`,
+              eventName: attendee.event.name,
+              summary,
+              ctaHref: attendeePortalUrl,
+            })
+          : createElement(RegistrationUpdateEmailTemplate, {
+              attendeeName: `${attendee.firstName} ${attendee.lastName}`,
+              eventName: attendee.event.name,
+              ctaHref: attendeePortalUrl,
+            }),
     });
 
     await createAuditLog({
@@ -239,7 +229,7 @@ export async function submitRegistrationAction(token: string, payload: unknown):
       entityType: "registration",
       entityId: attendee.id,
       action: "submitted",
-      summary: `Registrierung fuer ${attendee.email} gespeichert`,
+      summary: `Registrierung für ${attendee.email} gespeichert`,
       payload: {
         attendanceResponse: parsed.data.attendanceResponse,
       },
@@ -263,13 +253,23 @@ export async function submitRegistrationAction(token: string, payload: unknown):
   }
 }
 
-export async function toggleSessionSelectionAction(attendeeId: string, sessionId: string, select: boolean): Promise<ActionResult> {
+export async function toggleSessionSelectionAction(sessionId: string, select: boolean): Promise<ActionResult> {
   try {
+    const attendeeSession = await requireAttendeeSession();
+    const attendeeId = attendeeSession.user.attendeeId;
+
+    if (!attendeeId) {
+      return {
+        ok: false,
+        message: "Der Zugriff auf die Sitzungsauswahl ist nicht verfügbar.",
+      };
+    }
+
     const attendee = await prisma.attendee.findUniqueOrThrow({
       where: { id: attendeeId },
     });
 
-    const session = await prisma.sessionModel.findUniqueOrThrow({
+    const selectedSession = await prisma.sessionModel.findUniqueOrThrow({
       where: { id: sessionId },
       include: {
         selections: {
@@ -280,17 +280,24 @@ export async function toggleSessionSelectionAction(attendeeId: string, sessionId
       },
     });
 
-    if (!session.selectionEnabled) {
+    if (selectedSession.eventId !== attendee.eventId) {
       return {
         ok: false,
-        message: "Die Session-Auswahl ist fuer dieses Format deaktiviert.",
+        message: "Die Sitzung gehört nicht zu Ihrer Veranstaltung.",
       };
     }
 
-    if (select && session.capacity && session.selections.length >= session.capacity) {
+    if (!selectedSession.selectionEnabled) {
       return {
         ok: false,
-        message: "Diese Session ist derzeit ausgebucht. Die Warteliste wird spaeter ergaenzt.",
+        message: "Die Sitzungsauswahl ist für dieses Format deaktiviert.",
+      };
+    }
+
+    if (select && selectedSession.capacity && selectedSession.selections.length >= selectedSession.capacity) {
+      return {
+        ok: false,
+        message: "Diese Sitzung ist derzeit ausgebucht. Die Warteliste wird später ergänzt.",
       };
     }
 
@@ -325,7 +332,7 @@ export async function toggleSessionSelectionAction(attendeeId: string, sessionId
       entityType: "session_selection",
       entityId: sessionId,
       action: select ? "selected" : "deselected",
-      summary: `${attendee.email} hat ${session.title} ${select ? "gewaehlt" : "entfernt"}`,
+      summary: `${attendee.email} hat ${selectedSession.title} ${select ? "gewählt" : "entfernt"}`,
     });
 
     revalidatePath("/guest/agenda");
@@ -334,34 +341,58 @@ export async function toggleSessionSelectionAction(attendeeId: string, sessionId
 
     return {
       ok: true,
-      message: select ? "Session wurde hinzugefuegt." : "Session wurde entfernt.",
+      message: select ? "Sitzung wurde hinzugefügt." : "Sitzung wurde entfernt.",
     };
   } catch (error) {
     return {
       ok: false,
-      message: error instanceof Error ? error.message : "Die Session-Auswahl konnte nicht aktualisiert werden.",
+      message: error instanceof Error ? error.message : "Die Sitzungsauswahl konnte nicht aktualisiert werden.",
     };
   }
 }
 
-export async function submitFeedbackAction(attendeeId: string, payload: unknown): Promise<ActionResult> {
+export async function submitFeedbackAction(payload: unknown): Promise<ActionResult> {
   try {
     const parsed = feedbackSchema.safeParse(payload);
 
     if (!parsed.success) {
       return {
         ok: false,
-        message: parsed.error.issues[0]?.message ?? "Bitte pruefen Sie Ihre Eingaben.",
+        message: parsed.error.issues[0]?.message ?? "Bitte prüfen Sie Ihre Eingaben.",
+      };
+    }
+
+    const attendeeSession = await requireAttendeeSession();
+    const resolvedAttendeeId = attendeeSession.user.attendeeId;
+
+    if (!resolvedAttendeeId) {
+      return {
+        ok: false,
+        message: "Der Zugriff auf die Rückmeldung ist nicht verfügbar.",
       };
     }
 
     const attendee = await prisma.attendee.findUniqueOrThrow({
-      where: { id: attendeeId },
+      where: { id: resolvedAttendeeId },
+      include: {
+        sessionSelections: true,
+      },
     });
+
+    if (
+      parsed.data.type === FeedbackType.SESSION &&
+      parsed.data.sessionId &&
+      !attendee.sessionSelections.some((selection) => selection.sessionId === parsed.data.sessionId)
+    ) {
+      return {
+        ok: false,
+        message: "Bitte wählen Sie nur Sitzungen aus Ihrer persönlichen Agenda aus.",
+      };
+    }
 
     await prisma.feedback.create({
       data: {
-        attendeeId,
+        attendeeId: resolvedAttendeeId,
         eventId: attendee.eventId,
         sessionId: parsed.data.type === FeedbackType.SESSION ? parsed.data.sessionId : null,
         type: parsed.data.type,
@@ -371,30 +402,28 @@ export async function submitFeedbackAction(attendeeId: string, payload: unknown)
     });
 
     await sendTransactionalEmail({
-      attendeeId,
+      attendeeId: resolvedAttendeeId,
       eventId: attendee.eventId,
       to: attendee.email,
-      subject: "Vielen Dank fuer Ihr Feedback",
+      subject: "Vielen Dank für Ihre Rückmeldung",
       type: EmailType.ANNOUNCEMENT,
-      react: (
-        <AnnouncementEmailTemplate
-          title="Vielen Dank fuer Ihr Feedback"
-          body="Ihre Rueckmeldung hilft uns, die naechsten Event-Erlebnisse noch gezielter weiterzuentwickeln."
-          ctaHref={`${process.env.NEXTAUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/guest/feedback`}
-        />
-      ),
+      react: createElement(AnnouncementEmailTemplate, {
+        title: "Vielen Dank für Ihre Rückmeldung",
+        body: "Ihre Rückmeldung hilft uns, die nächsten Event-Erlebnisse noch gezielter weiterzuentwickeln.",
+        ctaHref: `${process.env.NEXTAUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/guest/feedback`,
+      }),
     });
 
     revalidatePath("/guest/feedback");
 
     return {
       ok: true,
-      message: "Vielen Dank fuer Ihr Feedback.",
+      message: "Vielen Dank für Ihre Rückmeldung.",
     };
   } catch (error) {
     return {
       ok: false,
-      message: error instanceof Error ? error.message : "Feedback konnte nicht gespeichert werden.",
+      message: error instanceof Error ? error.message : "Rückmeldung konnte nicht gespeichert werden.",
     };
   }
 }

@@ -1,83 +1,91 @@
 # ConferenceCompanion
 
-ConferenceCompanion is a private, invitation-only event webapp for closed corporate conferences. It is designed as a neutral whitelabel product by Tyrn.ON and focuses on registration, agenda, logistics, participant communication, and organizer workflows.
+ConferenceCompanion ist eine private, einladungsbasierte Event-Webapp für geschlossene Firmenveranstaltungen. Sie ist als neutrales Whitelabel-Produkt von Tyrn.ON gedacht und konzentriert sich auf Registrierung, Agenda, Logistik, Teilnehmerkommunikation und Arbeitsabläufe für Organisatoren.
 
-## Stack
+## Technologie
 
 - Next.js 15 App Router
 - TypeScript
 - Tailwind CSS
 - Prisma + PostgreSQL
-- Auth.js / NextAuth magic links
+- Auth.js / NextAuth Magic-Links
 - Zod + React Hook Form
 - TanStack Table
-- Resend transactional mail integration
-- PWA manifest + service worker
-- QR-based check-in
+- Resend für transaktionsbezogene E-Mails
+- PWA-Manifest + Service Worker
+- QR-Einlass
 
-## What Is Included
+## Enthalten
 
-- Invitation-based attendee registration with secure token links
-- Shared magic-link login for attendees and organizers
-- Mobile-first attendee area:
-  - Home
+- Einladungsgestützte Teilnehmerregistrierung mit sicheren Token-Links
+- Gemeinsamer Anmeldelink für Teilnehmer und Organisatoren
+- Mobiler Teilnehmerbereich:
+  - Startseite
   - Agenda
   - Meine Agenda
-  - Event-Informationen
-  - Speaker
-  - Downloads
-  - Updates
-  - Feedback
-- Basic organizer dashboard:
-  - Uebersicht
+  - Veranstaltungsinformationen
+  - Referenten
+  - Unterlagen
+  - Mitteilungen
+  - Rückmeldung
+- Einfache Verwaltungsoberfläche:
+  - Übersicht
   - Teilnehmer
   - Agenda
   - Inhalte
-  - Nachrichten
+  - Mitteilungen
   - Einstellungen
-  - Audit Log
-- QR check-in flow with camera scan and manual fallback
-- Transactional emails for invitation, confirmation, update, reminder, announcement, and magic-link access
-- Seed data for a neutral sample event: `Vertriebskonferenz 2026`
+  - Audit-Protokoll
+- QR-Einlass mit Kamera-Scan und manueller Suche
+- Transaktions-E-Mails für Einladung, Bestätigung, Mitteilung, Erinnerung, Ankündigung und Anmeldelink-Zugang
+- Seed-Daten für ein neutrales Beispiel-Event: `Vertriebskonferenz 2026`
 
-## Local Setup
+## Lokale Einrichtung
 
-1. Install dependencies:
+1. Abhängigkeiten installieren:
 
 ```bash
 pnpm install
 ```
 
-2. Copy environment variables:
+2. Umgebungsvariablen kopieren:
 
 ```bash
 cp .env.example .env
 ```
 
-3. Start PostgreSQL and update `DATABASE_URL` if needed.
+3. PostgreSQL starten und `DATABASE_URL` bei Bedarf anpassen.
 
-4. Generate Prisma client and sync the schema:
+4. Prisma-Client erzeugen und das Schema abgleichen:
 
 ```bash
 pnpm db:generate
 pnpm db:push
 ```
 
-5. Seed the sample conference:
+5. Das Beispiel-Event einspielen:
 
 ```bash
 pnpm db:seed
 ```
 
-6. Run the app:
+6. Die App starten:
 
 ```bash
 pnpm dev
 ```
 
-7. Open [http://localhost:3000](http://localhost:3000)
+7. Im Browser öffnen: [http://localhost:3000](http://localhost:3000)
 
-## Required Environment Variables
+8. Die Browser-E2E-Suite ausführen, wenn du einen vollständigen Login-, Registrierungs- und Einlass-Test willst:
+
+```bash
+pnpm test:e2e
+```
+
+Die Suite nutzt Playwright, spielt die Datenbank automatisch neu ein und speichert Artefakte in `output/playwright/`.
+
+## Benötigte Umgebungsvariablen
 
 - `DATABASE_URL`
 - `NEXTAUTH_URL`
@@ -86,43 +94,45 @@ pnpm dev
 - `EMAIL_FROM`
 - `RESEND_API_KEY`
 
-Without `RESEND_API_KEY`, email sending is simulated and logged to the server console plus `EmailLog`.
+Ohne `RESEND_API_KEY` wird der E-Mail-Versand simuliert und im Serverprotokoll sowie im `EmailLog` erfasst.
 
-## Seeded Access
+Für Playwright-E2E-Läufe muss die lokale `.env`-Datei vorhanden sein, damit der Testprozess `DATABASE_URL`, `NEXTAUTH_SECRET` und `APP_SECRET` laden kann.
 
-- Example super admin email: `laura.admin@conferencecompanion.example`
-- Example check-in staff email: `max.checkin@conferencecompanion.example`
-- Attendees use invitation links for first registration and magic links for return access
-- Organizers use the same magic-link login and are authorized through memberships in the database
+## Beispiel-Zugänge
 
-## Important Routes
+- Beispiel für eine Hauptadministrator-Adresse: `laura.admin@conferencecompanion.example`
+- Beispiel für eine Einlass-Adresse: `max.checkin@conferencecompanion.example`
+- Teilnehmer nutzen Einladungslinks für die erste Registrierung und Anmeldelinks für den späteren Zugriff
+- Organisatoren nutzen denselben Anmeldelink und werden über Rollen in der Datenbank freigeschaltet
 
-- `/login` shared login for attendees and organizers
-- `/invite/[token]` invitation and registration flow
-- `/guest` attendee webapp
-- `/admin` organizer dashboard
-- `/check-in` QR and manual check-in
-- `/api/health` lightweight app/database health endpoint
+## Wichtige Routen
 
-## Whitelabel Notes
+- `/login` gemeinsamer Anmeldelink für Teilnehmer und Organisatoren
+- `/invite/[token]` Einladungs- und Registrierungsfluss
+- `/guest` Teilnehmerbereich
+- `/admin` Verwaltungsbereich
+- `/check-in` QR- und manueller Einlass
+- `/api/health` leichter Gesundheitscheck für App und Datenbank
 
-- The visible product name is `ConferenceCompanion`
-- `powered by Tyrn.ON` is used only as a subtle producer hint
-- Sample data is neutral and can be replaced per client deployment
-- Legal and privacy copy should still be reviewed and tailored for each customer rollout
+## Whitelabel-Hinweise
 
-## Future Enterprise Options
+- Der sichtbare Produktname ist `ConferenceCompanion`
+- `powered by Tyrn.ON` wird nur dezent als Produzentenhinweis verwendet
+- Die Beispieldaten sind neutral und können pro Kunde ersetzt werden
+- Rechtstexte und Datenschutzhinweise sollten vor dem produktiven Einsatz geprüft und angepasst werden
 
-ConferenceCompanion is intentionally configured for a simple webapp-first launch. If a client later needs stronger enterprise controls, typical next steps are:
+## Spätere Enterprise-Optionen
 
-- SSO via a corporate identity provider
-- customer-specific legal/privacy wording
-- observability and alert routing
-- retention policies and automated cleanup jobs
-- tenant-specific branding and sender domains
+ConferenceCompanion ist bewusst für einen einfachen Webapp-First-Start konfiguriert. Wenn später stärkere Enterprise-Funktionen nötig sind, sind typische nächste Schritte:
 
-## Reference
+- SSO über einen unternehmensweiten Identitätsanbieter
+- kundenspezifische Rechtstexte und Datenschutzhinweise
+- Beobachtbarkeit und Alarmierung
+- Aufbewahrungsrichtlinien und automatische Bereinigungsjobs
+- kundenspezifisches Branding und Absender-Domänen
 
-- Prisma schema: [prisma/schema.prisma](/Users/davidwegener/Desktop/neue-apps/ConferenceCompanion/prisma/schema.prisma)
-- Seed script: [prisma/seed.ts](/Users/davidwegener/Desktop/neue-apps/ConferenceCompanion/prisma/seed.ts)
-- Whitelabel setup notes: [docs/whitelabel-setup.md](/Users/davidwegener/Desktop/neue-apps/ConferenceCompanion/docs/whitelabel-setup.md)
+## Referenz
+
+- Prisma-Schema: [prisma/schema.prisma](/Users/davidwegener/Desktop/neue-apps/ConferenceCompanion/prisma/schema.prisma)
+- Seed-Skript: [prisma/seed.ts](/Users/davidwegener/Desktop/neue-apps/ConferenceCompanion/prisma/seed.ts)
+- Whitelabel-Hinweise: [docs/whitelabel-setup.md](/Users/davidwegener/Desktop/neue-apps/ConferenceCompanion/docs/whitelabel-setup.md)

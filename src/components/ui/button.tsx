@@ -7,21 +7,21 @@ import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-full text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#da4f29]/35 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center rounded-[18px] text-sm font-semibold tracking-tight transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dce6e1] disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "bg-[#da4f29] text-[#fff8f1] shadow-lg shadow-[#da4f29]/20 hover:bg-[#c7441f]",
-        secondary: "bg-[#e4eadf] text-[#1d3528] hover:bg-[#d5ddd0]",
-        ghost: "bg-transparent text-[#1d3528] hover:bg-[#dce5d6]",
-        outline: "border border-[#bfcabd] bg-white text-[#1d3528] hover:bg-[#f3f6ef]",
-        destructive: "bg-[#8f2f20] text-white hover:bg-[#7a2417]",
+        default: "bg-[#17191c] text-white shadow-[0_20px_36px_-24px_rgba(17,19,21,0.7)] hover:translate-y-[-1px] hover:bg-[#0f1113] hover:shadow-[0_24px_44px_-28px_rgba(17,19,21,0.8)]",
+        secondary: "bg-[#ece6de] text-[#17191c] hover:bg-[#e3ddd5]",
+        ghost: "bg-transparent text-[#17191c] hover:bg-[#f0ebe3]",
+        outline: "border border-[#d5ccbf] bg-[#fbf8f3] text-[#17191c] hover:bg-[#f0ebe3]",
+        destructive: "bg-[#4f2d26] text-white hover:bg-[#3e221d]",
       },
       size: {
         default: "h-11 px-5",
         sm: "h-9 px-4 text-xs",
         lg: "h-12 px-6 text-base",
-        icon: "size-10 rounded-full",
+        icon: "size-11 rounded-[18px]",
       },
     },
     defaultVariants: {

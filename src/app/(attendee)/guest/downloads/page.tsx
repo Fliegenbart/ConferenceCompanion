@@ -19,19 +19,19 @@ export default async function DownloadsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Downloads" description="Briefings, Karten und logistische Unterlagen zum Download." />
-      <SiteSection title="Verfuegbare Dokumente">
+      <PageHeader eyebrow="Infos" title="Unterlagen" description="Pläne, Briefings und PDFs." />
+      <SiteSection title="Downloads" description="Datei öffnen oder speichern.">
         <div className="space-y-4">
           {attendee.event.downloads.map((asset) => (
-            <div key={asset.id} className="flex flex-col gap-4 rounded-[24px] border border-[#d9e1d5] bg-white p-5 md:flex-row md:items-center md:justify-between">
+            <div key={asset.id} className="flex flex-col gap-4 rounded-[20px] border border-[#e2dbd0] bg-white p-5 md:flex-row md:items-center md:justify-between">
               <div>
-                <p className="font-semibold text-[#173325]">{asset.title}</p>
-                <p className="text-sm text-[#5f7267]">{asset.description}</p>
+                <p className="font-medium text-[#111315]">{asset.title}</p>
+                <p className="text-sm text-[#5d646b]">{asset.description}</p>
               </div>
               <Button asChild>
                 <Link href={asset.fileUrl}>
                   <Download className="mr-2 size-4" />
-                  {asset.fileName}
+                  Herunterladen
                 </Link>
               </Button>
             </div>

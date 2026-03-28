@@ -2,7 +2,7 @@ import { AttendanceResponse, FeedbackRating, FeedbackType } from "@prisma/client
 import { z } from "zod";
 
 export const guestLoginSchema = z.object({
-  email: z.email("Bitte geben Sie eine gueltige E-Mail-Adresse ein."),
+  email: z.email("Bitte geben Sie eine gültige E-Mail-Adresse ein."),
 });
 
 export const registrationSchema = z.object({
@@ -16,7 +16,7 @@ export const registrationSchema = z.object({
   workshopNotes: z.string().trim().optional(),
   selectedSessionIds: z.array(z.string()).default([]),
   privacyAccepted: z.boolean().refine((value) => value, {
-    message: "Die Datenschutzinformation muss bestaetigt werden.",
+    message: "Die Datenschutzinformation muss bestätigt werden.",
   }),
   photoConsentAccepted: z.boolean().default(false),
 });
@@ -96,6 +96,14 @@ export const feedbackSchema = z.object({
   type: z.nativeEnum(FeedbackType),
   rating: z.nativeEnum(FeedbackRating),
   comment: z.string().trim().optional(),
+}).superRefine((value, ctx) => {
+  if (value.type === FeedbackType.SESSION && !value.sessionId) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["sessionId"],
+      message: "Bitte wählen Sie eine Session aus.",
+    });
+  }
 });
 
 export const checkInSchema = z.object({
